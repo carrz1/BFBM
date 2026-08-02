@@ -1,0 +1,52 @@
+Dropped 4 exact-duplicate systems (418 -> 414 distinct systems in the universe)
+
+==========================================================================================
+FILTER: systems with >=100 standalone bets AND standalone ROI >= -5.0% (all-time, 4 exact duplicates already dropped)
+Date window: 2022-01-01 onward
+==========================================================================================
+Qualifying systems: 220 of 414
+
+Naive bet-rows in window: 231,036 of 266,309 in the full filtered universe
+Distinct bets in window: 129,499
+
+==========================================================================================
+SINGLE- VS MULTI-SELECTION P/L, 2022-01-01 to present (quality-filtered universe)
+==========================================================================================
+              Number of Systems  Bets  Wins  Win%  BF_P/L  ROI%
+           1 (single selection) 78730  7783  9.89 4633.25  5.88
+2+ (multi-selection, collapsed) 50769  3849  7.58 6443.27 12.69
+
+TOTAL                      129,499     11632    8.98   11,076.52     8.55
+
+==========================================================================================
+SAME BREAKDOWN, YEAR BY YEAR (for context - not requested as the primary table, but shows whether the collapsed view is stable)
+==========================================================================================
+ Year Systems  Bets  Win%  BF_P/L  ROI%
+ 2022       1 11153 10.77 2234.73 20.04
+ 2022      2+  5202  8.25  605.26 11.64
+ 2023       1 14529 10.16  588.99  4.05
+ 2023      2+  7620  7.57  418.05  5.49
+ 2024       1 18257  9.85  245.02  1.34
+ 2024      2+ 10185  8.05 1437.35 14.11
+ 2025       1 21176  9.75 1627.60  7.69
+ 2025      2+ 15226  7.64 2620.62 17.21
+ 2026       1 13615  9.13  -63.10 -0.46
+ 2026      2+ 12536  6.86 1361.97 10.86
+
+==========================================================================================
+NOTES
+==========================================================================================
+
+- "Qualifying systems" is decided from all-time standalone performance
+  (same systems as filtered_agreement_report.py) - only the bet *dates*
+  are restricted to 2022-01-01 onward, not the criteria for which
+  systems are allowed to vote.
+- ROI% = 100 * BF_P/L / Bets: profit as a percentage of total staked,
+  1-unit stake per bet.
+- "2+ (multi-selection, collapsed)" merges every agreement level from 2
+  up to 10+ into one row - it answers "does more than one system agreeing
+  beat a single system firing alone", not "how much does agreement help
+  as it climbs", which is what filtered_agreement_report.py's full
+  per-count breakdown is for.
+
+Wrote collapsed_agreement_2022_2026.csv
