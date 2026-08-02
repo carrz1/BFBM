@@ -4,6 +4,24 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-02 (verified odds-band filtering in the combination/agreement reports)
+
+- CEO asked, after the combination-performance and filtered-agreement
+  reports, whether any odds filtering had actually been applied to those
+  numbers. Confirmed yes, both by re-reading the code and by an
+  independent check: `System_Audits/verify_odds_band_applied.py` rebuilds
+  the odds-band lookup straight from the audit workbooks and checks every
+  row of `cross_account_all_system_bets.csv` (the file every combination
+  and agreement report is built from) against its own system's stated
+  band directly, rather than trusting `cross_account_overlap.py`'s own
+  filtering logic.
+- **Result: 0 violations.** 183,976 of 305,468 rows belong to a system
+  with a stated odds band, and every one of them falls inside it. The
+  remaining 121,492 rows belong to systems whose name genuinely carries
+  no odds band ("none" - unrestricted by design), which is correct
+  behaviour, not a gap.
+- Output: `System_Audits/verify_odds_band_applied_report.txt`.
+
 ## 2026-08-02 (system filter extraction complete + similarity analysis)
 
 - Finished noggin4 (93/93 slots) — filter extraction is now complete for all

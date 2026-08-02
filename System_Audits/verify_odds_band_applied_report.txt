@@ -1,0 +1,6 @@
+Rows belonging to a system WITH an odds band    : 183,976
+Rows belonging to a system with NO odds band ('none'): 121,492
+Total rows checked                               : 305,468
+Rows found OUTSIDE their system's stated band    : 0
+
+PASS: every row respects its own system's odds band. 'No band' systems are unrestricted by design (the system's name genuinely has no price restriction), not a gap.
