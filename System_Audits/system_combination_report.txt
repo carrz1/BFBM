@@ -130,42 +130,84 @@ DO THE TOP PAIRS OUTPERFORM EITHER SYSTEM ALONE?
 ====================================================================================================
 THREE-WAY COMBINATIONS (>= 15 co-fired bets)
 ====================================================================================================
+3355 triples qualify.
 
 --- TOP 15 triples by ROI ---
-                             systems  bets  win_pct  pl_bf  roi_pct
- noggin4:72 + noggin5:97 + noggin:42    24     4.17 314.18  1309.10
-noggin2:11 + noggin5:21 + noggin5:63    16    12.50 204.44  1277.77
-noggin2:11 + noggin2:21 + noggin5:63    17    11.76 203.44  1196.72
- noggin4:13 + noggin4:6 + noggin5:60    18    11.11 206.35  1146.38
- noggin4:6 + noggin4:62 + noggin5:60    18    11.11 206.35  1146.38
-  noggin5:97 + noggin:35 + noggin:42    32     9.38 331.46  1035.81
- noggin3:49 + noggin5:97 + noggin:35    32     9.38 331.46  1035.81
-noggin4:13 + noggin4:62 + noggin5:60    20    10.00 204.35  1021.74
-noggin3:49 + noggin4:72 + noggin5:97    36     5.56 347.83   966.20
-  noggin5:16 + noggin5:39 + noggin:9    15    20.00 136.33   908.89
-noggin3:93 + noggin5:21 + noggin5:63    17     5.88 136.89   805.25
-noggin3:49 + noggin3:60 + noggin3:90   128     5.47 996.74   778.70
-noggin3:28 + noggin3:51 + noggin4:37    15    20.00 108.24   721.61
- noggin2:21 + noggin5:90 + noggin:47    19     5.26 134.89   709.96
- noggin3:49 + noggin5:10 + noggin:35    17     5.88 116.05   682.65
+     sys_a                     name_a      sys_b                     name_b      sys_c                     name_c  bets  win_pct  roi_pct
+noggin4:72     SS 4YO GB straits 2023 noggin5:97     SS 4YO GB STRAIGHTS UK  noggin:42              4YO STRAIGHTS    24     4.17  1309.10
+noggin2:11        HDGRdiff class6 - 7 noggin5:21 SS AW 7f 2yo3yo 8.01 - 500 noggin5:63 SS AW 7f 2yo3yo 8.01 - 500    16    12.50  1277.77
+noggin2:11        HDGRdiff class6 - 7 noggin2:21 HDGRdiff class6 - 7 BSP12. noggin5:63 SS AW 7f 2yo3yo 8.01 - 500    17    11.76  1196.72
+noggin4:13              NH CHP LTO v3  noggin4:6   NH CHP LTO 3.01 - 300 v3 noggin5:60      ss 9YO 10YO 11YOs  NH    18    11.11  1146.38
+ noggin4:6   NH CHP LTO 3.01 - 300 v3 noggin4:62                 NH CHP LTO noggin5:60      ss 9YO 10YO 11YOs  NH    18    11.11  1146.38
+noggin5:97     SS 4YO GB STRAIGHTS UK  noggin:35 SS 4YO STRAIGHTS all BSPs   noggin:42              4YO STRAIGHTS    32     9.38  1035.81
+noggin3:49 4YO STRAIGHTS 12.01 - 1000 noggin5:97     SS 4YO GB STRAIGHTS UK  noggin:35 SS 4YO STRAIGHTS all BSPs     32     9.38  1035.81
+noggin4:13              NH CHP LTO v3 noggin4:62                 NH CHP LTO noggin5:60      ss 9YO 10YO 11YOs  NH    20    10.00  1021.74
+noggin3:49 4YO STRAIGHTS 12.01 - 1000 noggin4:72     SS 4YO GB straits 2023 noggin5:97     SS 4YO GB STRAIGHTS UK    36     5.56   966.20
+noggin5:16 NH HDGRdiff 10.01 - 300.00 noggin5:39 HDGR DIFF v2 14.01 - 80.00   noggin:9 SS HDGRdiff JAN-APRIL 8.01    15    20.00   908.89
+noggin3:93 AW NEW TRAINER 9.00 - 300. noggin5:21 SS AW 7f 2yo3yo 8.01 - 500 noggin5:63 SS AW 7f 2yo3yo 8.01 - 500    17     5.88   805.25
+noggin3:49 4YO STRAIGHTS 12.01 - 1000 noggin3:60       STRs 10 DSLR or less noggin3:90     4YO STR 8.01 - 1000.00   128     5.47   778.70
+noggin3:28 UK TURF VISOR 30.01 - 65.0 noggin3:51                351 D SOF M noggin4:37 1 down VISOR 10.01 - 65.00    15    20.00   721.61
+noggin2:21 HDGRdiff class6 - 7 BSP12. noggin5:90    NEW TR FT 3.50 - 500.00  noggin:47 FIRST RUN NEW TRAINER ALL     19     5.26   709.96
+noggin3:49 4YO STRAIGHTS 12.01 - 1000 noggin5:10 JClaim v LTO 6.01 - 150.00  noggin:35 SS 4YO STRAIGHTS all BSPs     17     5.88   682.65
 
 --- BOTTOM 15 triples by ROI ---
-                             systems  bets  win_pct  pl_bf  roi_pct
-  noggin2:5 + noggin4:68 + noggin4:8    24      0.0  -24.0   -100.0
-noggin3:10 + noggin4:13 + noggin5:39    19      0.0  -19.0   -100.0
- noggin2:49 + noggin4:62 + noggin:24    16      0.0  -16.0   -100.0
- noggin2:49 + noggin4:59 + noggin:24    16      0.0  -16.0   -100.0
-  noggin2:4 + noggin4:62 + noggin:24    20      0.0  -20.0   -100.0
-noggin3:65 + noggin4:13 + noggin5:39    17      0.0  -17.0   -100.0
- noggin3:65 + noggin4:62 + noggin:97    17      0.0  -17.0   -100.0
-noggin3:65 + noggin4:59 + noggin5:39    20      0.0  -20.0   -100.0
-noggin4:13 + noggin4:62 + noggin5:91    15      0.0  -15.0   -100.0
- noggin2:4 + noggin2:69 + noggin5:10    15      0.0  -15.0   -100.0
- noggin3:17 + noggin5:90 + noggin:47    38      0.0  -38.0   -100.0
-noggin3:17 + noggin3:58 + noggin5:90    34      0.0  -34.0   -100.0
- noggin2:5 + noggin3:58 + noggin5:90    24      0.0  -24.0   -100.0
- noggin2:21 + noggin2:69 + noggin2:7    15      0.0  -15.0   -100.0
- noggin2:11 + noggin2:21 + noggin:57    31      0.0  -31.0   -100.0
+     sys_a                     name_a      sys_b                     name_b      sys_c                     name_c  bets  win_pct  roi_pct
+ noggin2:5 HDGRdiff FLAT AW 8.01 - 80 noggin4:68    SS VISOR 10.01 - 400.00  noggin4:8 HDGRdiff Class 6 14.01-80.    24      0.0   -100.0
+noggin3:10 NH SHORT TRAVELLERS SPRING noggin4:13              NH CHP LTO v3 noggin5:39 HDGR DIFF v2 14.01 - 80.00    19      0.0   -100.0
+noggin2:49 SS NH CHP LTO 2.01 - 300.0 noggin4:62                 NH CHP LTO  noggin:24  MM IRISH NH 9.01 - 200.00    16      0.0   -100.0
+noggin2:49 SS NH CHP LTO 2.01 - 300.0 noggin4:59 NH CHP LTO v3 2.01 - 1000.  noggin:24  MM IRISH NH 9.01 - 200.00    16      0.0   -100.0
+ noggin2:4 NH HDGRdiff 10.01 - 400.00 noggin4:62                 NH CHP LTO  noggin:24  MM IRISH NH 9.01 - 200.00    20      0.0   -100.0
+noggin3:65 TR ONE HORSE at TRACK 12.0 noggin4:13              NH CHP LTO v3 noggin5:39 HDGR DIFF v2 14.01 - 80.00    17      0.0   -100.0
+noggin3:65 TR ONE HORSE at TRACK 12.0 noggin4:62                 NH CHP LTO  noggin:97        MM NH 10.01 - 80.00    17      0.0   -100.0
+noggin3:65 TR ONE HORSE at TRACK 12.0 noggin4:59 NH CHP LTO v3 2.01 - 1000. noggin5:39 HDGR DIFF v2 14.01 - 80.00    20      0.0   -100.0
+noggin4:13              NH CHP LTO v3 noggin4:62                 NH CHP LTO noggin5:91 NH FMs 61-240DSLR 30.00-30    15      0.0   -100.0
+ noggin2:4 NH HDGRdiff 10.01 - 400.00 noggin2:69 HDGRdiff 5YO-8YO 10.5-65.0 noggin5:10 JClaim v LTO 6.01 - 150.00    15      0.0   -100.0
+noggin3:17        GELDED 7.01 - 65.00 noggin5:90    NEW TR FT 3.50 - 500.00  noggin:47 FIRST RUN NEW TRAINER ALL     38      0.0   -100.0
+noggin3:17        GELDED 7.01 - 65.00 noggin3:58     NEW TRAINER 2.01-30.00 noggin5:90    NEW TR FT 3.50 - 500.00    34      0.0   -100.0
+ noggin2:5 HDGRdiff FLAT AW 8.01 - 80 noggin3:58     NEW TRAINER 2.01-30.00 noggin5:90    NEW TR FT 3.50 - 500.00    24      0.0   -100.0
+noggin2:21 HDGRdiff class6 - 7 BSP12. noggin2:69 HDGRdiff 5YO-8YO 10.5-65.0  noggin2:7               IRE HDGRdiff    15      0.0   -100.0
+noggin2:11        HDGRdiff class6 - 7 noggin2:21 HDGRdiff class6 - 7 BSP12.  noggin:57 SS AW 6f 7f HDGR DIFF 3.01    31      0.0   -100.0
+
+====================================================================================================
+LARGE-SAMPLE TRIPLES (>= 300 co-fired bets) - the low-noise, decision-worthy tier
+====================================================================================================
+58 triples qualify.
+
+--- BEST large-sample triples (>=300 bets) by ROI ---
+     sys_a                     name_a      sys_b                     name_b      sys_c                     name_c  bets  win_pct  roi_pct
+noggin2:21 HDGRdiff class6 - 7 BSP12.  noggin2:5 HDGRdiff FLAT AW 8.01 - 80  noggin4:8 HDGRdiff Class 6 14.01-80.   387     6.72    83.26
+noggin2:11        HDGRdiff class6 - 7  noggin2:5 HDGRdiff FLAT AW 8.01 - 80  noggin4:8 HDGRdiff Class 6 14.01-80.   389     6.68    82.32
+noggin2:11        HDGRdiff class6 - 7 noggin2:21 HDGRdiff class6 - 7 BSP12.  noggin2:5 HDGRdiff FLAT AW 8.01 - 80   470     6.38    62.81
+noggin4:13              NH CHP LTO v3 noggin4:34 NH CHP LTO v3 10.01 - 300.  noggin4:6   NH CHP LTO 3.01 - 300 v3  1215     5.02    54.75
+noggin4:34 NH CHP LTO v3 10.01 - 300.  noggin4:6   NH CHP LTO 3.01 - 300 v3 noggin4:62                 NH CHP LTO  1291     4.88    50.86
+noggin4:34 NH CHP LTO v3 10.01 - 300. noggin4:59 NH CHP LTO v3 2.01 - 1000.  noggin4:6   NH CHP LTO 3.01 - 300 v3   961     4.27    47.87
+noggin2:11        HDGRdiff class6 - 7  noggin4:8 HDGRdiff Class 6 14.01-80. noggin5:39 HDGR DIFF v2 14.01 - 80.00   343     4.96    45.45
+noggin2:21 HDGRdiff class6 - 7 BSP12.  noggin4:8 HDGRdiff Class 6 14.01-80. noggin5:39 HDGR DIFF v2 14.01 - 80.00   345     4.93    44.60
+noggin2:49 SS NH CHP LTO 2.01 - 300.0  noggin4:6   NH CHP LTO 3.01 - 300 v3 noggin4:62                 NH CHP LTO   475     9.47    43.67
+noggin2:49 SS NH CHP LTO 2.01 - 300.0 noggin4:59 NH CHP LTO v3 2.01 - 1000.  noggin4:6   NH CHP LTO 3.01 - 300 v3   475     9.47    43.67
+noggin2:49 SS NH CHP LTO 2.01 - 300.0 noggin4:13              NH CHP LTO v3  noggin4:6   NH CHP LTO 3.01 - 300 v3   459     9.37    42.32
+noggin2:11        HDGRdiff class6 - 7 noggin2:21 HDGRdiff class6 - 7 BSP12.  noggin4:8 HDGRdiff Class 6 14.01-80.   764     5.24    41.41
+ noggin:24  MM IRISH NH 9.01 - 200.00  noggin:75 MM NH 0-7 runs HDGR 4.01 -  noggin:97        MM NH 10.01 - 80.00   302     6.62    41.19
+noggin2:11        HDGRdiff class6 - 7 noggin2:21 HDGRdiff class6 - 7 BSP12. noggin5:39 HDGR DIFF v2 14.01 - 80.00   371     4.85    38.84
+noggin2:49 SS NH CHP LTO 2.01 - 300.0 noggin4:34 NH CHP LTO v3 10.01 - 300. noggin4:59 NH CHP LTO v3 2.01 - 1000.   387     4.91    38.03
+
+--- WORST large-sample triples (>=300 bets) by ROI ---
+     sys_a                     name_a      sys_b                     name_b      sys_c                     name_c  bets  win_pct  roi_pct
+noggin4:13              NH CHP LTO v3 noggin4:62                 NH CHP LTO  noggin:79 NH HDGRDiff 6.01 - 1000.00   321     3.43   -34.05
+noggin3:90     4YO STR 8.01 - 1000.00  noggin:35 SS 4YO STRAIGHTS all BSPs   noggin:42              4YO STRAIGHTS   516     4.26   -33.55
+noggin3:49 4YO STRAIGHTS 12.01 - 1000 noggin3:90     4YO STR 8.01 - 1000.00  noggin:42              4YO STRAIGHTS  1049     3.24   -28.09
+ noggin2:4 NH HDGRdiff 10.01 - 400.00 noggin4:13              NH CHP LTO v3 noggin4:62                 NH CHP LTO   324     4.63   -26.78
+noggin3:49 4YO STRAIGHTS 12.01 - 1000 noggin3:79   4YO--------------------- noggin3:90     4YO STR 8.01 - 1000.00   303     4.62     0.33
+noggin4:38    NH 0 RUNS 6.01 - 270.00 noggin4:51 0 RUNS IRE FR v2 12.01 - 3 noggin4:97        0 RUNS HDGR NH COMP  2319     4.96     3.06
+noggin4:26 0 RUNS IRE FR 12.01 - 80.0 noggin4:51 0 RUNS IRE FR v2 12.01 - 3 noggin4:97        0 RUNS HDGR NH COMP  2000     5.00     6.92
+noggin4:26 0 RUNS IRE FR 12.01 - 80.0 noggin4:38    NH 0 RUNS 6.01 - 270.00 noggin4:51 0 RUNS IRE FR v2 12.01 - 3  1998     5.01     7.03
+ noggin4:3 N4-97 0 RUNS HDGR NH COMP  noggin4:38    NH 0 RUNS 6.01 - 270.00 noggin4:97        0 RUNS HDGR NH COMP  4105     7.31     8.16
+noggin2:13 SS NH CHP LTO 2.01 - 300.0 noggin4:13              NH CHP LTO v3 noggin4:59 NH CHP LTO v3 2.01 - 1000.   621     8.70     8.33
+ noggin4:3 N4-97 0 RUNS HDGR NH COMP  noggin4:51 0 RUNS IRE FR v2 12.01 - 3 noggin4:97        0 RUNS HDGR NH COMP  2090     5.12     8.61
+ noggin4:3 N4-97 0 RUNS HDGR NH COMP  noggin4:38    NH 0 RUNS 6.01 - 270.00 noggin4:51 0 RUNS IRE FR v2 12.01 - 3  2085     5.13     8.87
+noggin2:13 SS NH CHP LTO 2.01 - 300.0 noggin4:13              NH CHP LTO v3 noggin4:62                 NH CHP LTO   718     8.91     9.73
+noggin4:26 0 RUNS IRE FR 12.01 - 80.0 noggin4:38    NH 0 RUNS 6.01 - 270.00 noggin4:97        0 RUNS HDGR NH COMP  2027     5.08    10.01
+noggin4:13              NH CHP LTO v3 noggin4:59 NH CHP LTO v3 2.01 - 1000. noggin4:62                 NH CHP LTO  2794     9.02    10.23
 
 ====================================================================================================
 CAVEATS - read before acting on any single pair/triple
@@ -175,11 +217,15 @@ CAVEATS - read before acting on any single pair/triple
   out-of-sample test. A pair standing out here may partly reflect that both
   systems were independently tuned on the same market inefficiencies, not a
   new discovery.
-- The top-by-ROI table at the 20-bet floor is mostly noise: those
-  pairs mostly show a 0-10% win rate carried to a four-figure ROI% by one or
-  two long-priced winners. Do not act on anything from that table alone.
-  The LARGE-SAMPLE PAIRS section (>=300 bets) is the one worth
-  reading - ROI numbers there are still built on genuine volume.
+- The top-by-ROI tables at the 20-bet floor (both pairs and
+  triples) are mostly noise: those combinations mostly show a 0-10% win
+  rate carried to a four-figure ROI% by one or two long-priced winners. Do
+  not act on anything from those tables alone. The LARGE-SAMPLE sections
+  (>=300 bets) are the ones worth reading - ROI numbers there
+  are still built on genuine volume. Triples are rarer than pairs by
+  construction (all three systems must fire on the same horse), so the
+  large-sample triple list is shorter - treat that as a real constraint,
+  not a bug.
 - A pair's bets are a *subset* of each system's own bets (only the ones
   where both fired), so "pair beats both systems solo" is somewhat expected
   by construction - agreement selects for the more standout runners in each

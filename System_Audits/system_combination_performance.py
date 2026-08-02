@@ -141,11 +141,7 @@ def report_vs_standalone(qualified, standalone, names):
               f"-> together ({int(r['bets'])} bets): {r['roi_pct']:>7.2f}%")
 
 
-def report_triples(grouped, names, min_sample=15, top_n=15):
-    print()
-    print("=" * 100)
-    print(f"THREE-WAY COMBINATIONS (>= {min_sample} co-fired bets)")
-    print("=" * 100)
+def triple_performance(grouped):
     stats = defaultdict(lambda: {"n": 0, "wins": 0, "pl_bf": 0.0})
     for row in grouped.itertuples():
         keys = row.sys_keys
@@ -159,22 +155,59 @@ def report_triples(grouped, names, min_sample=15, top_n=15):
 
     rows = []
     for combo, s in stats.items():
-        if s["n"] < min_sample:
-            continue
         rows.append({
-            "systems": " + ".join(combo), "bets": s["n"],
-            "win_pct": round(100 * s["wins"] / s["n"], 2),
+            "sys_a": combo[0], "sys_b": combo[1], "sys_c": combo[2],
+            "bets": s["n"], "win_pct": round(100 * s["wins"] / s["n"], 2),
             "pl_bf": round(s["pl_bf"], 2),
             "roi_pct": round(100 * s["pl_bf"] / s["n"], 2),
         })
-    df = pd.DataFrame(rows)
-    if df.empty:
+    return pd.DataFrame(rows)
+
+
+def _fmt_triples(df, names, label, top_n=15):
+    print(f"\n--- {label} ---")
+    out = df.copy()
+    for col in ["a", "b", "c"]:
+        out[f"name_{col}"] = out[f"sys_{col}"].map(names).str.slice(0, 26)
+    cols = ["sys_a", "name_a", "sys_b", "name_b", "sys_c", "name_c",
+            "bets", "win_pct", "roi_pct"]
+    print(out[cols].head(top_n).to_string(index=False))
+
+
+def report_triples(triples, names, min_sample=15, top_n=15):
+    print()
+    print("=" * 100)
+    print(f"THREE-WAY COMBINATIONS (>= {min_sample} co-fired bets)")
+    print("=" * 100)
+    qualified = triples[triples["bets"] >= min_sample].copy()
+    if qualified.empty:
         print("No triples meet the sample threshold.")
-        return
-    print(f"\n--- TOP {top_n} triples by ROI ---")
-    print(df.sort_values("roi_pct", ascending=False).head(top_n).to_string(index=False))
-    print(f"\n--- BOTTOM {top_n} triples by ROI ---")
-    print(df.sort_values("roi_pct").head(top_n).to_string(index=False))
+        return qualified
+    print(f"{len(qualified)} triples qualify.")
+    _fmt_triples(qualified.sort_values("roi_pct", ascending=False), names,
+                 f"TOP {top_n} triples by ROI", top_n)
+    _fmt_triples(qualified.sort_values("roi_pct"), names,
+                 f"BOTTOM {top_n} triples by ROI", top_n)
+    return qualified
+
+
+def report_large_sample_triples(triples, names, top_n=15):
+    """Same low-noise standard as the pairs: enough co-fired bets that the
+    ROI isn't just one or two lucky-priced winners."""
+    print()
+    print("=" * 100)
+    print(f"LARGE-SAMPLE TRIPLES (>= {LARGE_SAMPLE} co-fired bets) - "
+          f"the low-noise, decision-worthy tier")
+    print("=" * 100)
+    big = triples[triples["bets"] >= LARGE_SAMPLE].copy()
+    print(f"{len(big)} triples qualify.")
+    if big.empty:
+        return big
+    _fmt_triples(big.sort_values("roi_pct", ascending=False), names,
+                 f"BEST large-sample triples (>={LARGE_SAMPLE} bets) by ROI", top_n)
+    _fmt_triples(big.sort_values("roi_pct"), names,
+                 f"WORST large-sample triples (>={LARGE_SAMPLE} bets) by ROI", top_n)
+    return big
 
 
 def main():
@@ -186,7 +219,10 @@ def main():
     qualified = report_pairs(pairs, names, standalone)
     report_large_sample_pairs(qualified, names)
     report_vs_standalone(qualified, standalone, names)
-    report_triples(grouped, names)
+
+    triples = triple_performance(grouped)
+    report_triples(triples, names)
+    report_large_sample_triples(triples, names)
 
     print()
     print("=" * 100)
@@ -197,11 +233,15 @@ def main():
   out-of-sample test. A pair standing out here may partly reflect that both
   systems were independently tuned on the same market inefficiencies, not a
   new discovery.
-- The top-by-ROI table at the {MIN_SAMPLE}-bet floor is mostly noise: those
-  pairs mostly show a 0-10% win rate carried to a four-figure ROI% by one or
-  two long-priced winners. Do not act on anything from that table alone.
-  The LARGE-SAMPLE PAIRS section (>={LARGE_SAMPLE} bets) is the one worth
-  reading - ROI numbers there are still built on genuine volume.
+- The top-by-ROI tables at the {MIN_SAMPLE}-bet floor (both pairs and
+  triples) are mostly noise: those combinations mostly show a 0-10% win
+  rate carried to a four-figure ROI% by one or two long-priced winners. Do
+  not act on anything from those tables alone. The LARGE-SAMPLE sections
+  (>={LARGE_SAMPLE} bets) are the ones worth reading - ROI numbers there
+  are still built on genuine volume. Triples are rarer than pairs by
+  construction (all three systems must fire on the same horse), so the
+  large-sample triple list is shorter - treat that as a real constraint,
+  not a bug.
 - A pair's bets are a *subset* of each system's own bets (only the ones
   where both fired), so "pair beats both systems solo" is somewhat expected
   by construction - agreement selects for the more standout runners in each
