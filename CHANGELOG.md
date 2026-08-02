@@ -4,6 +4,40 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-02 (system filter extraction complete + similarity analysis)
+
+- Finished noggin4 (93/93 slots) — filter extraction is now complete for all
+  five accounts, 423 systems total.
+- Built `System_Audits/filter_similarity_analysis.py` (output in
+  `filter_similarity_report.txt`): joins each system's HRB criteria with
+  its validated odds band, normalizes each filter into a set of individual
+  conditions (dropping the universal `dateyears >=2003` floor, which
+  carries no discriminating information), then compares every system
+  against every other for exact matches and near-duplicates (Jaccard
+  similarity, same odds band).
+- **Result: the portfolio is much less redundant at the criteria level
+  than the overlap analysis might have suggested.** Only 4 exact-duplicate
+  groups (8 systems) and 4 near-duplicate pairs (8 systems) out of 423 —
+  407 systems have genuinely distinct criteria+band combinations. The
+  60%+ bet-level overlap found earlier is a portfolio-construction
+  problem (many different, legitimate systems converging on the same
+  well-known horses), not a sign the CEO built the same system over and
+  over under different names.
+- **Two of the four exact duplicates are within a single account** — the
+  same criteria and odds band saved twice under different names, with no
+  cross-account explanation needed: noggin5 slot 30 "Ascot HUNT CUP AW WIN
+  LTO" = slot 98 "Ascot HUNT CUP Hdgr"; noggin2 slot 39 "Elliott Gordon
+  Hurdles NH Flat ALL BSPs" = slot 88 "SS NH Elliott Gordon Hurdles NH
+  Flat ALL BSPs" (near-identical name too — almost certainly an
+  accidental re-save). These are the cheapest ones to prune.
+- The other two exact duplicates are cross-account: noggin3 slot 23 = 
+  noggin5 slot 23 (same slot number, same name, same criteria — likely
+  built once and knowingly copied to a second account); noggin2 slot 75
+  "2021 MeehanB 2021" = noggin5 slot 31 "2021 MeehanBJ TURF 2021" (near-
+  identical name, one extra space difference aside).
+- Output: `filter_similarity_systems.csv` (all 423 systems with their
+  account, slot, name, odds band, and P/L, for building a prune list).
+
 ## 2026-08-01 (system filter extraction started - for duplicate/overlap detection)
 
 - CEO asked a follow-up to the overlap analysis: with ~420 systems across 5

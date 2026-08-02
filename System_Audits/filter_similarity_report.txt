@@ -1,0 +1,45 @@
+==============================================================================
+STEP 1 - EXACT DUPLICATES (identical criteria AND identical odds band)
+==============================================================================
+4 groups of exact duplicates, covering 8 systems.
+
+  noggin5:30 == noggin5:98
+      noggin5:30     Ascot HUNT CUP AW WIN LTO
+      noggin5:98     Ascot HUNT CUP Hdgr
+  noggin3:23 == noggin5:23
+      noggin3:23     SS 4YO 5F 5.5F 9.01 - 1000.00
+      noggin5:23     SS 4YO 5F 5.5F 9.01 - 1000.00
+  noggin2:75 == noggin5:31
+      noggin2:75     2021 MeehanB 2021
+      noggin5:31     2021 MeehanBJ  TURF 2021
+  noggin2:39 == noggin2:88
+      noggin2:39     Elliott Gordon Hurdles NH Flat ALL BSPs
+      noggin2:88     SS NH Elliott Gordon Hurdles NH Flat ALL BSPs
+
+==============================================================================
+STEP 2 - NEAR-DUPLICATES (Jaccard similarity >= 0.75, same odds band, not already an exact duplicate)
+==============================================================================
+4 near-duplicate pairs found.
+
+  0.938  noggin:1       2024 7YOs BASE 2024                    <-> noggin:5       2021 7YOs BASE 2021                   
+         only in B: careerwins NOT BETWEEN 1 and 2
+  0.833  noggin3:11     SS NH D&G 7.00 - 1000.00 v1            <-> noggin3:12     SS NH D&G 7.00 - 1000.00              
+         only in A: horse_age BETWEEN 6 and 11; horsecountry IN (1,2)
+  0.833  noggin3:96     FMs NH JUNE 9.01 - 200.00 IRE LL       <-> noggin3:99     FMs NH JUNE 9.01 - 200.00 IRE         
+         only in A: lastrun BETWEEN 366 and 1460
+         only in B: lastrun BETWEEN 26 and 120
+  0.818  noggin:71      ROYAL ASCOT GB 31 plus DSLR v2         <-> noggin:78      ROYAL ASCOT GB 12 - 20 DSLR           
+         only in A: lastrun BETWEEN 31 and 730
+         only in B: lastrun BETWEEN 12 and 20
+
+==============================================================================
+STEP 3 - SUMMARY
+==============================================================================
+Systems analysed              : 423
+Exact duplicates              : 8 systems in 4 groups
+Near-duplicates (>=0.75 Jaccard, not exact): 8 systems in 4 pairs
+  of which cross-account       : 0 pairs
+
+Systems seemingly unique to their own criteria+band: 407
+
+Wrote filter_similarity_systems.csv (423 systems).

@@ -123,14 +123,36 @@ workbooks) will be joined onto this data before comparing systems — two
 systems can share identical HRB criteria but bet completely different price
 ranges, so the criteria string alone isn't the whole picture.
 
-**Status: 4 of 5 accounts done** (noggin5 68/68, noggin 92/92, noggin2
-88/88, noggin3 82/82 — the 81 originally audited plus one new slot added
-since). noggin4 (93 slots) deferred to the next session. Output in
-`System_Audits/filters/noggin{,2,3,5}_filters.jsonl`. Full write-up and
-resume instructions in
-`C:\Users\User\Desktop\ClaudeTO\FILTER_EXTRACTION_PROGRESS.md` (that repo
-is git-tracked; this one isn't, so that's where session-to-session
-continuity for this phase lives).
+**Status: complete for all 5 accounts** (noggin 92/92, noggin2 88/88,
+noggin3 82/82, noggin4 93/93, noggin5 68/68 — 423 systems total). Output in
+`System_Audits/filters/noggin{,2,3,4,5}_filters.jsonl`.
+
+### Similarity/duplicate results (2026-08-02)
+
+`System_Audits/filter_similarity_analysis.py`, output in
+`System_Audits/filter_similarity_report.txt` and
+`System_Audits/filter_similarity_systems.csv`. Compares every system's
+normalized criteria set (each filter split into individual `AND` conditions,
+the universal `dateyears >=2003` floor dropped since it carries no
+discriminating information) plus its validated odds band against every
+other system, for exact matches and near-duplicates (Jaccard similarity).
+
+**The portfolio is far less redundant at the criteria level than the bet-
+level overlap analysis might suggest**: only 4 exact-duplicate groups (8
+systems) and 4 near-duplicate pairs (8 systems) out of 423 — 407 systems
+have genuinely distinct criteria+band combinations. The 60%+ bet-level
+overlap documented above is a portfolio-construction problem (many
+different, legitimate systems converging on the same well-known horses),
+not repeated systems under different names.
+
+Two of the four exact duplicates are within a single account (the cheapest
+to prune, no cross-account story needed): noggin5 slot 30 = slot 98 ("Ascot
+HUNT CUP AW WIN LTO" / "Ascot HUNT CUP Hdgr"), and noggin2 slot 39 = slot 88
+("Elliott Gordon Hurdles NH Flat ALL BSPs" / "SS NH Elliott Gordon Hurdles
+NH Flat ALL BSPs" — the near-identical names suggest an accidental re-save).
+The other two are cross-account: noggin3 slot 23 = noggin5 slot 23 (same
+slot number and name too); noggin2 slot 75 = noggin5 slot 31 ("2021
+MeehanB(J) 2021" / "TURF 2021").
 
 Two things learned worth keeping for future extraction passes: (1) the
 browser's console history buffer accumulates across the whole session
