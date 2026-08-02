@@ -19,10 +19,14 @@ stake scaling, odds-band reconciliation, safety rails, reporting) is in
 The BFBM CSV column format itself is documented in
 [bfbm_tips_reference.md](bfbm_tips_reference.md).
 
-**Current stage: preparatory audit, not yet building the pipeline.**
-Before merging any selections, the CEO wants to know which of the ~500
-systems across the five HRB accounts are actually profitable — worth
-including — and which to drop. That audit is the active work.
+**Current stage: audit complete, selection-quality refinement well
+underway, live-execution pipeline not yet built (but investigated).**
+Before merging any selections, the CEO wanted to know which of the ~500
+systems across the five HRB accounts are actually profitable, how they
+interact (overlap, agreement, combinations), and how a portfolio-level
+staking approach might improve on flat 1-point staking per bet. See
+"Selection-quality refinement" and "Live execution pipeline - BFBM
+tips-import" below for where that stands.
 
 ## Why the audit matters
 
@@ -285,6 +289,122 @@ were redone. Worth checking for on any future account too.
 One slot (82, named just "MM") hit the 10,000-row download cap - the
 true bet count since its saved date may be higher than what's captured;
 flagged in its Odds Parsing Note column rather than treated as final.
+
+## Selection-quality refinement (2026-08-02)
+
+A chain of follow-up questions, each script building on the last, all
+using `cross_account_all_system_bets.csv` (every system-bet row from the
+overlap analysis) as the source data. Full detail and headline numbers
+for each are in CHANGELOG.md; this section is the map of how they connect.
+
+1. **`system_combination_performance.py`** - which *combinations* of
+   systems perform best/worst together (pairs, then triples with a
+   large-sample tier). Finding: the best combinations are variations
+   within the same proven family (e.g. "4YO STRAIGHTS"), not random
+   pairings.
+2. **`filtered_agreement_report.py`** - restricts the agreement-count
+   analysis to systems with >=100 standalone bets and standalone ROI
+   >= -5% (`MIN_BETS`, `MAX_LOSS_PCT`), with the 4 exact-duplicate systems
+   from the similarity analysis dropped first so a system saved twice
+   can't double-vote (`EXACT_DUPLICATES_TO_DROP`). 220 of 414 systems
+   qualify; filtered ROI 9.28% vs 5.63% unfiltered. This filtered universe
+   (`load_all_bets()` / `standalone_performance()`) is imported and reused
+   by every later script in this section.
+3. **`collapsed_agreement_2022_2026_report.py`** - same filtered universe,
+   2022 onward, agreement collapsed to single-vs-multi (2+). Multi beats
+   single overall (12.69% vs 5.88%), but single was still ahead in 2022
+   (20.04% vs 11.64%) - the reversal over time is what the next script
+   investigates.
+4. **`single_selection_erosion_report.py`** - confirmed the CEO's "stolen
+   picks" hypothesis with a specific mechanism: bets promoted out of
+   single-selection by a *newer* system return well above bets that
+   stayed single, but that promoted-bet ROI itself collapsed after 2024 -
+   not because confirming systems got less proven (their age at
+   confirmation actually rose), but because the sheer *population* of new
+   systems grew ~25x, so "a new system agreed" stopped being a meaningful
+   independent second opinion. A separate old+old vs promoted split
+   confirmed this is specific to the new-system-confirmation pathway, not
+   a general decay of narrowing-by-agreement (old+old confirmation is
+   still positive in 2026).
+5. **`race_dilution_report.py`** - a second, independent dilution
+   mechanism: more systems also means more *different* horses backed in
+   the same race (avg 2.14/race in 2022 -> 4.36 in 2026), which is a
+   distinct effect from same-horse multi-system agreement. The
+   4+-selection-race breakdown by BF odds band (heavy losses at short
+   odds, strong gains from ~32.00+ upward) is what prompted the "Value"
+   discussion and the next script.
+6. **`value_ratio_staking_report.py`** / **`marginal_systems_staking_report.py`**
+   - tests a CEO-proposed stake-scaling formula, `stake = min(cap,
+   Odds_Exchange / Runners)` (Phil Bull-style: bet more when the price is
+   longer relative to field size, i.e. further "from the crowd"). Real
+   effect confirmed in the 16-128 odds range specifically (not a clean
+   universal law - inverts at the very short and very long extremes, the
+   128+ inversion traced to a handful of Betfair's 1000.00-price-ceiling
+   wins, not a genuine pattern). Staking backtest: flat 9.28% ROI -> 18.62%
+   at cap 5, but drawdown grows roughly as fast as the cap and uncapped
+   staking produces single stakes of 250+ points - cap 3-5 is the sane
+   range. Tested separately against systems with no query-time odds
+   restriction (almost the whole universe, 399/414) and against the 22
+   weakest-but-still-qualifying systems (breakeven to -5% ROI): **not a
+   reliable rescue for weak systems** - helps some, actively worsens
+   others, because it amplifies whatever a system's own odds/ROI
+   relationship already is rather than adding independent value. Should
+   be applied per-system by inspection, not blanket-applied to "the weak
+   ones."
+
+**None of this has been wired into a live pipeline yet** - see the next
+section for where BFBM execution actually stands.
+
+## Live execution pipeline - BFBM tips-import (investigated 2026-08-02)
+
+CEO asked how the value-ratio staking formula could actually be
+implemented in BFBM, which led to checking whether a live automated
+pipeline exists at all, rather than assuming one does.
+
+**Finding: no live pipeline currently exists.** Every strategy configured
+in BFBM (`C:\Users\User\AppData\Local\bfbotmanager.com\Bf Bot Manager
+V3\`) is an untouched vendor "EXAMPLE - ..." strategy. `log.txt` shows
+every tips-import attempt on record dates to 04-06 February 2020 (the
+CEO's own early testing), and every one failed - either a file-lock error
+(the CSV was open elsewhere) or, for one malformed test file, a
+column-mapping error. No import has been retried since.
+
+**But the feature itself is not broken or removed** - it's still
+documented in the current manual and the installed version is still
+actively running (3.1.30.2023, log active as recently as 30/07/2026). One
+of the 2020 test files, `E:\racing\BFBOTManager\from BFBM.csv`, already
+has the correct column header the manual documents and, per the log,
+never actually reached the parsing stage - only the file-lock error. It's
+currently unlocked and references a long-settled 2020 race, making it a
+safe, zero-risk candidate to retry the import with.
+
+**How a computed stake would actually reach BFBM**: the "Bet on imported
+selections/tips" strategy condition reads the CSV's `Size` column
+directly as the stake - no formula engine exists on BFBM's side (no
+free-text expression box, and no runner-count variable in any of its
+native staking plans), so any formula like the value-ratio one above has
+to be computed externally, before export, and written straight into
+`Size`. Confirmed via the manual that importing a tip alone can never
+place a bet by itself - a bet only happens if a *Started* strategy uses
+that staking rule, and none currently is.
+
+**Known limitation - can't patch a stale stake by re-importing.** A
+duplicate tip (same selection + same `Provider` name) is silently
+dropped, not updated. This matters because field size (`Runners`, the
+denominator of the value-ratio formula) can shrink after export if a
+different horse in the race is declared a non-runner - and since a
+correction can't be pushed via a second import, the only mitigation is
+computing/exporting the stake as late as practically possible (after most
+declarations are in), plus keeping BFBM's native "removed runner"
+tip-filter on as a backstop for the narrower case where the *selection
+itself* is scratched (that filter doesn't cover a different runner being
+scratched, which is the harder case for this formula).
+
+**Status: waiting on a live re-test.** Next step is retrying `Manage tips
+-> Import tips from file` with `from BFBM.csv`, with no strategy started
+(so even success can't place a real bet against the already-closed 2020
+market), to confirm the 2020 bugs don't recur before any pipeline work
+starts on top of this.
 
 ## How the audit actually works (HRB mechanics)
 

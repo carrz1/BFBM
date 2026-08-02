@@ -4,6 +4,233 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-02 (BFBM live-execution pipeline investigated - dormant, not broken)
+
+- CEO asked how the value-ratio staking formula (below) could actually be
+  implemented in BFBM, which surfaced a bigger question: is there even a
+  live automated pipeline running today? Investigated the actual BFBM
+  install (`C:\Users\User\AppData\Local\bfbotmanager.com\Bf Bot Manager
+  V3\`) and its manuals rather than assuming.
+- **Finding: no live pipeline exists.** Every strategy currently
+  configured in BFBM is an untouched vendor "EXAMPLE - ..." strategy.
+  `log.txt` shows every `ImportTips`/`ReadTips` event on record dates to
+  04-06 February 2020, and every one failed - either a file-lock
+  `IOException` (the CSV was open in another program) or, for
+  `test1.csv` specifically, a `CsvReaderException: No properties are
+  mapped for type 'SelectionCSVData'` (that file's header,
+  `Provider,SelectionName`, is missing the columns BFBM's importer
+  expects). CEO confirmed this was their own testing at the time.
+- **Important distinction: dormant, not removed or broken.** The
+  tips-import feature itself is still documented in the current manual
+  and the installed version (3.1.30.2023, log shows it running as
+  recently as 30/07/2026). `E:\racing\BFBOTManager\from BFBM.csv` (one of
+  the two 2020 test files) already has the exact column header the
+  manual documents (`Provider, Handicap, SelectionId, MarketId, EventId,
+  SelectionName, MarketName, EventName, MarketType, StartTime, BetType,
+  Size, Points, Price, MinPrice, MaxPrice, BSP`) and, per the log, never
+  actually reached the column-parsing stage - it only ever hit the file
+  lock error. It's currently unlocked and referencing a long-settled 2020
+  race, so it's a safe candidate to retry the import with, unchanged.
+- **Confirmed mechanism for feeding a computed stake in**: BFBM's "Bet on
+  imported selections/tips" strategy condition reads the CSV's `Size`
+  column directly as the stake (no formula engine needed on BFBM's side -
+  the computation has to happen externally, before export). Confirmed via
+  the manual that importing a tip alone can never place a bet by itself -
+  only a *Started* strategy using that staking rule can, and none is
+  currently started.
+- **Confirmed limitation: can't patch a stale stake by re-importing.**
+  Per the manual, a duplicate tip (same selection + same Provider name) is
+  silently dropped, not updated - so "recompute the stake later and
+  re-upload" does not work as a way to react to a non-runner declared
+  after export. The practical implication (raised by the CEO): field size
+  can shrink between export and race-off, making a value-ratio stake
+  computed too early stale. Since it can't be corrected after the fact,
+  the mitigation has to be timing - compute and export as close to race
+  time as practical (after most declarations are in), and keep BFBM's
+  native "removed runner" tip-filter switched on as a backstop for the
+  case where the selection itself is scratched (that filter doesn't
+  address a *different* runner being scratched, which is the harder case).
+- **Status: waiting on a live test.** CEO is going to retry importing
+  `from BFBM.csv` via Manage Tips -> Import tips from file tomorrow (with
+  no strategy started, so even success can't place a bet against the
+  already-closed 2020 market) to confirm the 2020 bugs don't recur before
+  any real pipeline work starts.
+
+## 2026-08-02 (value-ratio staking formula tested - odds/field-size based stake scaling)
+
+- CEO proposed a stake-sizing theory: in an N-runner race, the 'fair'
+  price under an equal-chance assumption is N, so a selection's own price
+  relative to that baseline (`value_ratio = Odds_Exchange / Runners`)
+  indicates how far the market has moved it from the crowd - a Phil
+  Bull-style "bet more when the signal is stronger" idea, staking
+  `min(cap, value_ratio)`. Built `System_Audits/value_ratio_staking_report.py`
+  to test it on the quality-filtered universe (systems with >=100
+  standalone bets and standalone ROI >= -5%, exact duplicates dropped -
+  same filter as `filtered_agreement_report.py`).
+- **Ratio bands show a strong pattern** (-3.94% ROI at ratio <0.5, up to
+  63.63% at ratio 8.0+), but average field size is nearly flat across
+  every band (~11 runners) in this dataset - so on its own this mostly
+  re-describes the already-known raw-odds effect, not clear evidence
+  field size adds anything new.
+- **The real test - does field size add signal beyond raw odds alone?
+  Mixed.** Splitting bets within the same odds band at the median ratio:
+  in the 16-128 odds range the theory holds clearly (e.g. at 64-128 odds,
+  small-field bets returned 47.6% vs big-field 29.2%), but it's flat/
+  reversed at the short end (2-8 odds) and inverts hard at the very long
+  end (128+, where big-field bets returned 119.6% vs small-field's
+  21.0%).
+- **Narrowed in on the 128+ inversion (per CEO request) - it's a
+  small-sample artifact, not a real effect.** Only ~50 winners exist
+  across both halves of that band. The "small field" half's advantage
+  comes almost entirely from 3 bets that won at exactly 1000.00 (Betfair's
+  maximum tradable price) - those three alone account for ~63% of that
+  half's total profit. Whichever half happens to catch a rare
+  capped-price winner looks dramatically better purely by chance; not
+  reliable evidence either way at this extreme.
+- **Staking backtest**: flat 1-point staking on this universe is 9.28%
+  ROI; scaling stake by the ratio raises this monotonically with the cap
+  (cap 3: 14.94%, cap 5: 18.62%, cap 10: 24.68%, uncapped: 63.52%), but
+  drawdown grows roughly as fast as the cap, and uncapped produces a
+  250-point single stake on one bet - the exact bank-breaking risk the
+  CEO flagged up front. Cap 3-5 looks like the sane practical range.
+  Year-by-year (cap 5), the scaled approach beats flat staking in every
+  year with a real sample (2016-2026), including through the recent
+  erosion years - not a fluke of one good year.
+- **Second test (per CEO request): does the formula rescue weak/marginal
+  systems?** Built `System_Audits/marginal_systems_staking_report.py`.
+  Grepped every system's extracted filter for the `odds_workout` field to
+  find systems with no query-time odds restriction at all (399 of 414 -
+  confirmed almost the whole universe, not a distinguishing group on its
+  own), and separately isolated the 22 systems with >=100 standalone bets
+  sitting at breakeven-to-losing-5% ROI (the weakest performers that
+  still clear the quality filter). **Result: not a reliable rescue.**
+  Aggregate ROI for the 22 weak systems barely crosses into positive at
+  cap 5 (-1.36% flat -> +0.13%) and gets worse again at cap 8 (-0.49%).
+  Individually it's a genuine mixed bag: 9 of 22 flip from a loss to a
+  profit (a couple dramatically), but 13 got worse, several much worse
+  (e.g. one system went from -2.21% to -19.60%). Conclusion: the formula
+  amplifies whatever a system's own odds/ROI relationship already is - it
+  helps systems whose edge sits at long prices and actively hurts systems
+  whose weakness is concentrated there, so it should be applied per-system
+  by inspection, not blanket-applied to "the weak ones" as a group.
+- Outputs: `value_ratio_by_band.csv`, `value_ratio_vs_odds_alone.csv`,
+  `value_ratio_staking_backtest.csv`, `value_ratio_staking_by_year.csv`,
+  `marginal_systems_staking_summary.csv`, `marginal_systems_staking_detail.csv`.
+
+## 2026-08-02 (race-level dilution - more different horses backed per race)
+
+- Follow-up to the single-selection erosion finding: CEO asked whether
+  part of the decline could simply be more systems -> more *different*
+  horses backed in the same race -> less profit per winning bet, distinct
+  from the same-horse-multiple-systems-agreeing question already covered.
+  Built `System_Audits/race_dilution_report.py` (groups by race - Date +
+  RTime + track - rather than by horse; every figure still uses one stake
+  per distinct horse, exactly as elsewhere).
+- **Confirmed, and it's a real, separate mechanism.** Average distinct
+  horses backed per race rose from 2.14 (2022) to 4.36 (2026). Races with
+  6+ distinct horses backed were 14% of stake volume at +8.09% ROI in
+  2022, but 52% of stake volume at -2.33% ROI by 2026.
+- **P/L breakdown for 4+-selection races** (CEO-specified threshold), by
+  number of runners and by BF odds band: 93,481 bets, 4.96% ROI overall.
+  Sweet spot by field size is 12-14 runners (13.31%) and 15-17 (9.69%);
+  losers are 2-5 runners (-1.31%) and 21+ (-3.17%). By odds band: losses
+  at 2.01-4.00 (-6.54%) and 4.01-8.00 (-1.56%); strong gains from
+  32.01-64.00 upward (11.30%, 18.69%, 17.42%) - this odds-band pattern is
+  what prompted the follow-up "Value" research and the value-ratio
+  staking formula above.
+- Outputs: `race_dilution_by_year.csv`, `race_dilution_4plus_by_runners.csv`,
+  `race_dilution_4plus_by_odds_band.csv`.
+
+## 2026-08-02 (single-selection erosion - testing the "stolen picks" hypothesis)
+
+- CEO's hypothesis, after seeing single-selection ROI decline over time:
+  has building more systems around what already works effectively
+  "stolen" the successful selections from the single-selection category?
+  Built `System_Audits/single_selection_erosion_report.py` on the same
+  quality-filtered universe, with a fixed early/new system split
+  (`EARLY_CUTOFF = 2021-12-31`).
+- **Confirmed, with a specific mechanism, not just "unproven new ideas
+  don't pan out."** Bets that started as an early-system single selection
+  and were later "promoted" (confirmed by a newer system) return 10.32%
+  ROI (13,015 bets) vs 4.91% for bets that stayed single (39,082 bets).
+  Promotion rate climbed from 3.83% (2022) to 47.65% (2026) of early
+  singles, while stayed-single ROI collapsed from 22.80% to -9.89% over
+  the same period.
+- **Unpacked why promoted-bet ROI itself then collapsed after 2024**, via
+  two competing explanations: (A) newer/less-tested confirming systems
+  getting worse over time - ruled out, confirmer age at the moment of
+  confirming actually *rose* (76 days in 2022 to 300+ by 2024-26); (B) the
+  sheer population of new systems growing so large that "confirmed" has
+  stopped meaning much - confirmed: average new confirmers per early-single
+  bet grew ~25x (0.042 in 2022 to 1.055 in 2026), so by 2026 at least one
+  new system firing on any given horse is close to guaranteed regardless
+  of genuine merit.
+- **Follow-up: is this a broad decay of "narrowing by confirmation", or
+  specific to new systems doing the confirming?** Added an old+old (both
+  confirming systems early, early_count>=2) vs promoted (a new system
+  doing the confirming) comparison by year. Old+old agreement shows no
+  real trend and is still positive in 2026 (4.28% ROI); the collapse is
+  concentrated specifically in the promoted pathway (21.32% in 2022 down
+  to -3.19% in 2026). **Conclusion: not a general decay of narrowing by
+  agreement - specific to the pathway where a newly-created system does
+  the confirming.**
+- Practical implication discussed: deleting all systems created after
+  2024 was rejected (would gut the best-performing family along with the
+  weak ones); recommended instead treating new-system confirmation as a
+  weaker signal than old-system confirmation, consistent with the old+old
+  vs promoted split above.
+- Outputs: `single_selection_erosion_categories.csv`,
+  `single_selection_erosion_by_year.csv`,
+  `single_selection_erosion_old_vs_promoted.csv`.
+
+## 2026-08-02 (collapsed single- vs multi-selection P/L, 2022-2026)
+
+- Follow-up to the filtered agreement-count report: CEO asked for the
+  same quality-filtered universe with every multi-selection (2+ systems
+  agreeing) collapsed into one row, restricted to 2022-01-01 onward.
+  Built `System_Audits/collapsed_agreement_2022_2026_report.py`.
+- **Overall: single 5.88% ROI vs multi 12.69%.** Year-by-year shows 2022
+  as the only year single selections beat multi (20.04% vs 11.64%); by
+  2026 single is -0.46% while multi is 10.86% - the erosion pattern
+  investigated in depth in the next entry.
+- Output: `collapsed_agreement_2022_2026.csv`.
+
+## 2026-08-02 (quality-filtered agreement-count P/L report)
+
+- Extends the overlap analysis's "does agreement predict winners"
+  question to a filtered universe: only systems with >=100 standalone
+  bets and standalone ROI >= -5% are allowed to vote (exact-duplicate
+  systems from the similarity analysis dropped first, per explicit CEO
+  instruction, so a system saved twice doesn't double-vote). Built
+  `System_Audits/filtered_agreement_report.py`.
+- **220 of 414 systems qualify.** Filtered universe ROI is 9.28% vs 5.63%
+  unfiltered/naive - filtering out unproven or losing systems from the
+  agreement count materially improves the picture even before any other
+  refinement.
+- Also independently re-verified (CEO asked directly whether odds
+  filtering was actually being applied to these numbers, not just
+  assumed): `System_Audits/verify_odds_band_applied.py` rebuilds the
+  odds-band lookup from the audit workbooks directly and checks every row
+  against its own system's stated band. **0 violations** across 305,468
+  rows.
+- Outputs: `filtered_agreement_qualifying_systems.csv`,
+  `filtered_agreement_by_count.csv`.
+
+## 2026-08-02 (system combination performance - pairs and triples)
+
+- CEO asked which *combinations* of systems have performed best/worst
+  together, not just individual systems or raw agreement-count. Built
+  `System_Audits/system_combination_performance.py` - computes
+  pairwise and triple-wise co-fired-bet performance
+  (`MIN_SAMPLE = 20`, `LARGE_SAMPLE = 300` for a separate high-confidence
+  tier, added for triples per CEO follow-up request).
+- Best large-sample pair: `noggin3:49 + noggin3:90` (the "4YO STRAIGHTS"
+  family), 3,242 co-fired bets, 53.35% ROI. Best large-sample triples
+  cluster in the "HDGRdiff class6-7" and "NH CHP LTO" families - i.e. the
+  best combinations aren't random pairings, they're variations within the
+  same proven family reinforcing each other.
+- Output: `system_combination_report.txt`.
+
 ## 2026-08-02 (verified odds-band filtering in the combination/agreement reports)
 
 - CEO asked, after the combination-performance and filtered-agreement
