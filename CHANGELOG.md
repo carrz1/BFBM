@@ -1,0 +1,526 @@
+# Changelog
+
+All notable work on this project, newest first. See
+[PROJECT.md](PROJECT.md) for the full picture — this file is a log of
+what happened and when, not a spec.
+
+## 2026-08-01 (system filter extraction started - for duplicate/overlap detection)
+
+- CEO asked a follow-up to the overlap analysis: with ~420 systems across 5
+  unwieldy accounts, how many are actually similar or identical to each
+  other under the hood, not just by name? Started extracting the literal
+  compiled HRB filter (`completewheresteps`, a SQL-like criteria string,
+  e.g. `horse_age BETWEEN 4 and 13 AND nh_flat_aw_id IN (1) AND dateyears
+  >=2003`) for every slot in every account, to run a real similarity/
+  duplicate analysis once complete. Per CEO instruction, will join this
+  against each slot's already-validated odds band before comparing systems
+  - two systems can share identical selection criteria but bet completely
+  different price ranges.
+- Reused the recall→quals fetch pipeline from the raw-TSV-caching phase,
+  but stopped one step earlier (read the `completewheresteps` hidden field
+  off the `v4qualifiersexcel.php` form instead of submitting it) - much
+  cheaper per slot since it skips the actual TSV download.
+- **4 of 5 accounts done**: noggin5 (68/68), noggin (92/92), noggin2
+  (88/88), noggin3 (82/82 - the 81 originally audited plus one new slot,
+  48 "ss 351 D SOF Mv1", added since the audit). noggin4 (93 slots)
+  deferred to the next session per CEO instruction.
+- Output: `System_Audits/filters/noggin{,2,3,5}_filters.jsonl`. Full
+  writeup and resume instructions in
+  `C:\Users\User\Desktop\ClaudeTO\FILTER_EXTRACTION_PROGRESS.md`.
+- Found and worked around a browser console quirk: the console history
+  buffer accumulates across the whole session rather than clearing between
+  read calls, so early reads returned stale duplicate matches from earlier
+  accounts. Fixed by extracting "last occurrence wins" for each slot number
+  rather than trusting the first match - verified correct against several
+  slots whose names are already documented elsewhere in this file (e.g.
+  noggin3 slot 51 "351 D SOF M", noggin3 slot 86 "3YO UP CLASS", noggin2
+  slot 96 "YORK MAY MEETING 240 - 300 dslr").
+- Also hit a real concurrency risk worth flagging: a batch that appeared to
+  "time out" from the tool's perspective was actually still running in the
+  browser in the background, and a second batch fired on top of it for
+  about a minute before this was noticed - two request streams briefly hit
+  HRB at once, which is exactly the pattern that caused account 1's
+  rate-limit lockout earlier in the project. No errors resulted this time,
+  but the approach was changed afterward to fire each batch as a
+  non-blocking background task and explicitly poll a completion flag before
+  starting the next one, rather than trusting the tool call's own
+  success/timeout signal.
+
+## 2026-08-01 (re-audited the 17 system-changed slots)
+
+- Re-audited the 17 systems the overlap analysis flagged as
+  `system-changed` (not explainable by ordinary daily-qualifier drift):
+  16 in noggin slots 1-57, plus noggin3 slot 67. New script
+  `System_Audits/reaudit_system_changed.py` recomputes each from the
+  already-cached fresh raw TSVs, reusing the Odds Band already validated
+  in the workbook (not re-parsed from the name) and the same saved+1 /
+  BF-commission formula as every other script in this project, then
+  updates just those rows in place in `HRB_System_Performance_Audit_
+  noggin_FINAL.xlsx` and `HRB_System_Performance_Audit_noggin3.xlsx`.
+- Both workbooks were open in Excel and locked the first attempt; CEO
+  closed them and the write succeeded. Verified before finishing: row
+  counts unchanged (92 and 81) and every untouched row byte-identical to
+  the pre-edit backup - only the 17 targeted rows changed.
+- Biggest correction: **noggin slot 53 "NEWTONclaude"** (saved
+  2026-07-05, actively worked on) Bets 922->234, P/L(BF) 305.75->36.35.
+  Smallest: noggin slot 6, Bets 271->290 (this one gained bets - a genuine
+  criteria change, not just narrowing).
+- Re-ran the full cross-account validation afterward: all 17 now match
+  their raw data exactly (321/421 exact matches, up from 304), and every
+  remaining mismatch is accounted for by drift or the 3 known truncated
+  slots - no `UNEXPLAINED` bucket.
+- **The portfolio overlap conclusions from the prior entry are
+  unchanged** - `cross_account_overlap.py`'s Steps 2 onward were always
+  computed from the raw per-bet TSVs directly, never from the workbooks'
+  summary figures, so re-auditing the workbooks doesn't move the 60.6%
+  duplication / +11,893 dedup P/L headline at all. Only Step 1
+  (validation) and the two workbooks themselves needed fixing.
+- Backups of both workbooks before the edit kept as `*.bak_pre_reaudit`
+  in `System_Audits/`.
+
+## 2026-08-01 (cross-account overlap analysis - the audit's punchline)
+
+- Built `System_Audits/cross_account_overlap.py`, extending the old
+  single-account `overlap_analysis_noggin2.py` to all five accounts now
+  that every account's raw per-bet data is cached. Full output saved to
+  `System_Audits/cross_account_overlap_report.txt`.
+- **Headline: 60.6% of the portfolio's apparent profit is the same wins
+  counted more than once.** Pooling all 418 bet-producing systems gives
+  305,468 per-system bet rows but only **175,149 distinct horse+race
+  bets** (1.744x overlap - 42.7% of rows are duplicates). Naive summed
+  P/L(BF) +30,191 collapses to **+11,893 deduplicated**.
+- **The recent picture is far worse than the all-time one.** Restricting
+  to 2026 year-to-date (400 systems firing, i.e. close to a real live
+  portfolio): naive +5,383 at 7.89% ROI vs **dedup +206 at 0.69% ROI** -
+  96.2% of this year's apparent profit is duplication. Last 12 months:
+  +9,546 / 9.07% naive vs **+1,748 / 3.57% dedup**. The divergence grows
+  over time simply because more systems exist now, so more of them fire
+  on the same horses.
+- Overlap is genuinely cross-account, not just within-account: **21.3%
+  of distinct bets are fired by systems in more than one account**
+  (15.5% by two accounts, 4.3% by three, 1.4% by four or five). Every
+  account pair shares 14-27% of the smaller account's bets. noggin4 is
+  both the largest contributor (119,836 rows) and the most internally
+  redundant (1.563x within-account overlap).
+- **Agreement looks like a real signal, not just waste.** Deduplicated
+  ROI rises monotonically with the number of systems firing on a horse -
+  1 system 5.65%, 3 systems 12.05%, 6-9 systems 28.60%, 10+ 36.03% -
+  even though strike rate *falls* (10.19% -> 5.49%), because agreement
+  concentrates at longer prices. Same direction over the last 12 months
+  (6-9: 24.82%, 10+: 59.43%). Caveated in the script: these systems were
+  all hand-built by one person so the "independence" is soft, and the
+  high-agreement buckets sit where variance is widest. Still, an
+  agreement threshold looks like a much better lever for the live
+  pipeline than running all 418 systems flat.
+- **Data-quality check, after CEO pushback.** The analysis recomputes
+  every system from raw and cross-checks it against the signed-off
+  workbooks: 304 of 421 match exactly. The CEO challenged the first pass
+  on this, pointing out that HRB refreshes system qualifiers daily and
+  the raw TSVs were downloaded after the workbooks were built - so drift,
+  not staleness, could be the whole story. **Largely correct: 97 of the
+  117 mismatches are drift.** The classifier was rewritten to *test* that
+  rather than assume it, by asking whether truncating the fresh data at
+  some date in the workbook build window (20 Jul 2026 onwards, workbooks
+  built 29-31 Jul, raw pulled 31 Jul - 1 Aug) reproduces the workbook's
+  bet count exactly:
+  - `date-drift` (83) - a cutoff reproduces the figure exactly.
+  - `date-drift(cap-shift)` (8) - capped slots, where arriving rows push
+    old ones off the bottom of the 10,000-row window, so the count can
+    fall as well as rise without anything having changed.
+  - `date-drift(partial-day)` (6) - +1 or +2 bets, no exact cutoff because
+    the workbook was built partway through a race day.
+  - `truncated-raw` (3) - noggin3/51, noggin4/97, noggin5/39 as before.
+  - **`system-changed` (17)** - the residue drift cannot explain.
+- **The 17 are real.** 16 are noggin slots 1-57 (the rows
+  `build_noggin_final.py` copied verbatim from the older account-1
+  workbook and never recomputed - it only recomputed 58-100), plus
+  noggin3 slot 67. The decisive evidence is direction: 10 of them are
+  **uncapped slots returning FEWER bets than the workbook**, and daily
+  accumulation can only ever add rows - with no cap there is no window to
+  shift. Nor does the odds band, ignoring the odds band, or a
+  saved-date-inclusive window reproduce them. So the qualifier sets
+  themselves have moved: edited criteria, or dynamic (form/ratings-
+  relative) criteria re-evaluating against newer data. The clearest case
+  is **noggin slot 53 "NEWTONclaude"** (saved 2026-07-05), an actively
+  worked-on slot: 922 bets in the workbook vs 234 now, and its entire
+  raw history now starts 2025-01-01.
+  **Those 17 rows shouldn't drive include/exclude decisions until
+  re-audited** - cheap now that the fetch pipeline works.
+- Robustness check: dropping all of noggin 1-57 moves the headline
+  duplication share from 60.6% to 62.6% (and 2026 YTD from 96.2% to
+  95.6%), so none of the conclusions below depend on those rows.
+- noggin slot 82 ("MM", the CEO-confirmed test slot) has no cached raw
+  and is excluded; 3 further systems produced zero qualifying bets, hence
+  418 contributing rather than 421.
+- Outputs: `cross_account_all_system_bets.csv` (every system-bet row),
+  `cross_account_dedup_bets.csv` (one row per distinct bet),
+  `cross_account_validation.csv` (per-system raw-vs-workbook check).
+
+## 2026-08-01 (raw per-bet TSV caching complete for all five accounts)
+
+- Cached the raw per-bet qualifier TSVs for **noggin5's 68 slots** to
+  `System_Audits/noggin5_raw/` — the last account whose raw downloads
+  weren't yet saved to disk (its original audit was computed via the
+  in-browser JS pipeline without caching the raw TSVs, same as account
+  1's 37 re-audited slots). noggin, noggin2, noggin3, and noggin4 were
+  already cached from earlier sessions.
+- Pipeline was driven entirely via in-page `fetch()`, no real navigation:
+  POST `recallslot=N` to `v4builder.php`, parse the response for the
+  "Quals" submit button's form, POST that, parse the result for the
+  `v4qualifiersexcel.php` XLS form (the one without a `csv` field), POST
+  that to get the raw TSV. Verified against a real button click first to
+  confirm server-side session state ("You are editing your system saved
+  in slot N...") persists correctly across fetch-only calls before
+  relying on it for all 68 slots.
+- Processed in batches of 9, each slot's TSV gzip+base64'd and
+  `console.log`'d immediately after fetching (not batched in JS memory),
+  then flushed to disk via `System_Audits/extract_console_payloads.py` +
+  a gzip-decode step before starting the next batch, per explicit
+  instruction to save progress incrementally after this project lost a
+  session's work to a context/token cutoff before.
+- 3-second pause between slots, matching every prior account's pacing to
+  avoid repeating account 1's rate-limit lockout. No blocks encountered.
+- All 68 output files verified to start with the `RTime` TSV header
+  (i.e. correctly decoded, not left as raw base64) before finishing.
+- **All five HRB accounts now have their raw per-bet TSVs cached to
+  disk.** Next step (not started): cross-account overlap analysis.
+
+## 2026-08-01 (retroactive capped-slot check: noggin, noggin2, noggin3)
+
+- Extended yesterday's noggin5 fix to the other four accounts, per the
+  CEO's request. Found each account's capped slots via `grep` for the
+  cap note in each account's build script (noggin2 needed checking its
+  10,001-line raw TSV files instead, since it never got the cap-note
+  treatment).
+- **noggin (account 1), slot 82 "MM"** - CEO confirmed this is a test
+  slot not actually in use, skipped per instruction. Not fixed.
+- **noggin2** - 13 capped slots (2, 4, 5, 7, 11, 21, 31, 61, 69, 70, 76,
+  90, 99). All still have their raw TSVs cached in `noggin2_raw/` from
+  the original audit, so no live account access was needed - checked
+  the oldest row in each cached file directly against the saved date.
+  **All 13 confirmed complete**, no corrections needed.
+- **noggin3, slot 51 "351 D SOF M"** - genuinely truncated, same failure
+  mode as noggin5's slot 39: no odds band to pre-filter on, and the raw
+  unfiltered download (10,000 rows) didn't reach back to the 2015-04-06
+  saved date - it stopped at 2016-05-27. Fixed with the year-split-and-
+  merge method (added a Date (Year) 2015+2016 filter, fetched a second
+  download, merged the non-overlapping date ranges). **Corrected**: Bets
+  10,000→11,289, Wins 978→1,111, P/L(SP) -1,674.19→-1,954.47, P/L(BF)
+  +527.51→**+380.26**, ROI(BF) 5.28%→3.37%. Still profitable, but the
+  extra 2015-2016 history pulled the true figure down, not up - a
+  reminder that "the real number is higher" isn't a safe assumption,
+  only "the real number is different" is.
+- Rebuilt `System_Audits/HRB_System_Performance_Audit_noggin3.xlsx`
+  with the corrected slot 51 row; still 81 rows. Sent to the CEO.
+- **noggin4, slot 97 "0 RUNS HDGR NH COMP"** - confirmed truncated once
+  the CEO logged into noggin4: the raw download (this system also has a
+  built-in Odds(SP) 1.50-34.00 criterion baked into the system itself,
+  separate from the name-parsed odds band, but that alone wasn't enough
+  to dodge the cap) stopped at 2021-05-04, short of the 2019-08-27 saved
+  date. Fixed with the same year-split-and-merge method (Date (Year)
+  2019+2020+2021, merged non-overlapping with the original download).
+  **This is the biggest correction of the whole retroactive check - it
+  flips the system's sign**: P/L(BF) went from **-83.94** (apparently a
+  narrow loser) to **+516.64** (actually solidly profitable). Bets
+  10,000→13,635, Wins 1,267→1,701, ROI(BF) -0.84%→3.79%.
+- Rebuilt `System_Audits/HRB_System_Performance_Audit_noggin4.xlsx` with
+  the corrected slot 97 row; still 93 rows. Sent to the CEO.
+- **Retroactive capped-slot check is now complete** for all five
+  accounts (noggin's one capped slot was a known test slot, skipped by
+  CEO instruction; the other four accounts' capped slots are all
+  checked and correct). Three genuine truncation bugs found and fixed
+  across the whole project: noggin5 slot 39, noggin3 slot 51, noggin4
+  slot 97 - all via the same server-side-prefilter-then-year-split
+  method now documented in PROJECT.md.
+
+## 2026-08-01 (noggin5: fixed a real truncation bug in capped slots)
+
+- **The CEO spotted wonky numbers on slot 39** ("HDGR DIFF v2 14.01 -
+  80.00") that didn't match what HRB's own site showed when the odds
+  filter was applied before downloading, and suggested the fix:
+  1. load the system, 2. apply the odds filter via the Breakdown tab's
+  **Odds (BFSP)** category *before* downloading qualifiers, so the
+  10,000-row cap applies to the odds-filtered set instead of the raw
+  unfiltered history.
+- This exposed a real gap in the noggin5 methodology: a capped
+  10,000-row download only reaches back a certain distance in time -
+  whether that distance covers the system's saved date is silently
+  unknowable without checking the oldest row's date. For slot 39, even
+  odds-filtering wasn't enough - the download still hit 10,000 rows and
+  only reached back to 2023-06-04, short of the 2021-04-02 saved date.
+  Fixed by adding a second download restricted to years 2021-2023 (via
+  a **Date (Year)** breakdown category) and merging the two non-overlapping
+  downloads locally. Full method now documented in PROJECT.md.
+- **Slot 39 corrected**: Bets 4,549→16,928, Wins 181→687, P/L(SP)
+  -1,052.50→-3,552.00, P/L(BF) +73.70→**+419.14**, ROI(BF) 1.62%→2.48%.
+  Still profitable on BF, but the original figure was a genuine ~6x
+  understatement of the true magnitude - not just an ambiguous "review
+  manually" flag, an actual wrong number.
+- **Checked all other 15 capped noggin5 slots the same way** (3, 7, 8,
+  9, 10, 16, 22, 27, 40, 41, 42, 53, 57, 90, 91) - all 15 confirmed
+  complete (the oldest row in each capped/pre-filtered download predates
+  that slot's saved date), no other corrections needed. Updated their
+  Odds Parsing Notes from the old generic "review manually" cap flag to
+  a note confirming they were specifically re-verified and found
+  complete.
+- Rebuilt `System_Audits/HRB_System_Performance_Audit_noggin5.xlsx` with
+  the corrected slot 39 row and updated notes; still 68 rows, no
+  duplicates. Sent to the CEO.
+- **Not yet done**: the same capped-slot verification hasn't been
+  applied retroactively to noggin/noggin2/noggin3/noggin4's capped
+  slots. Worth doing at some point, flagged in PROJECT.md.
+
+## 2026-07-31 (noggin5 account 5 completed - final account)
+
+- **Completed the noggin5 (account 5) system audit** - all 68 slots, the
+  last of the five HRB accounts. Session was interrupted mid-run by a
+  context reset after 21 slots; resumed and finished the remaining 47
+  the same day using the same in-browser fetch+compute pipeline as
+  accounts 1/3/4.
+- **Found and fixed a real correctness bug on resume**: the fetched TSV
+  columns are double-quoted (e.g. `"2"` not `2`), and the win-detection
+  check (`Position === '1'`) never stripped the quotes, so no win was
+  ever counted - every slot computed before the fix showed 0 wins with
+  P/L(SP) and P/L(BF) both equal to `-1 * bets`. This is silently
+  plausible-looking (not an obviously broken number) and was only
+  caught by cross-checking slot 1's odds-band-free result against HRB's
+  own baseline report, which must match exactly with no odds filter
+  applied - it didn't. Fixed by stripping quotes from every column
+  before comparison/parsing; every slot computed up to that point
+  (including the two already "done" before the reset, since the JS
+  pipeline itself isn't persisted across a reset) was recomputed. See
+  PROJECT.md "Fetching per-bet data" for the full writeup.
+- **This account had the most 10,000-row-cap slots of any account so
+  far** - 16 of 68 slots hit the cap (3, 7, 8, 9, 10, 16, 22, 27, 39,
+  40, 41, 42, 53, 57, 90, 91), all flagged in their Odds Parsing Note.
+  Several of this account's systems date back to 2018-2021 with very
+  high qualifier volume.
+- Two new odds-band exclusion patterns confirmed (no new words needed,
+  existing account-4 exclusion lists already covered them): slot 38
+  "1-5DSLR" (glued, no space) and slot 91 "61-240DSLR" (glued) both
+  correctly skipped via the existing `dslr` following-word exclusion;
+  slot 57 "0-6 RUNS" correctly skipped via `runs`.
+- Merged into `System_Audits/HRB_System_Performance_Audit_noggin5.xlsx`
+  via new `System_Audits/build_noggin5_audit.py`. All 68 real slots
+  present, no duplicates, verified against the bulk-report slot list.
+  Sent to the CEO.
+- **Status: all five HRB accounts (noggin, noggin2, noggin3, noggin4,
+  noggin5) are now fully audited.** The system-profitability audit
+  phase of the BFBM project is complete. Next phase per PROJECT.md is
+  the selections→BFBM CSV import pipeline - not started, not requested
+  yet.
+
+## 2026-07-31 (noggin4 account 4 completed)
+
+- **Completed the noggin4 (account 4) system audit** — all 93 slots in
+  one pass, same in-browser fetch+compute pipeline as noggin3.
+- **Extended the odds-band parser with two more account-specific
+  exclusion rules**, found via inline review while processing (see
+  PROJECT.md "Odds band parsing" for details):
+  - Added `n` to the preceding-word exclusion list, to catch this
+    account's internal cross-reference codes like "N4-97" (slot 3) and
+    "N4-36" (slot 81) — these reference another slot number, not an
+    odds band, and would otherwise have been misread as e.g. a
+    "4 - 97" price range.
+  - Extended the range-separator regex to accept the word "to" as well
+    as "-", after finding slot 41 "DSLR and 2ndLR 12.0 to 35.0 BSP"
+    used a different spelling convention than every other slot seen so
+    far across all four accounts.
+- Both new rules were spot-verified against their trigger slots (41,
+  57 for "to"; 3, 81 for "N4-") before trusting them for the rest of
+  the run.
+- One slot (97 "0 RUNS HDGR NH COMP") hit the 10,000-row download cap,
+  flagged the same way as prior accounts' capped slots.
+- Merged into `System_Audits/HRB_System_Performance_Audit_noggin4.xlsx`
+  via new `System_Audits/build_noggin4_audit.py`. All 93 real slots
+  present, no duplicates, verified against the bulk-report slot list.
+  Sent to the CEO.
+- **Status: noggin, noggin2, noggin3, and noggin4 audits are now all
+  complete.** Account 5 still not started.
+
+## 2026-07-31 (noggin3 account 3 completed)
+
+- **Completed the noggin3 (account 3) system audit** — all 81 slots in
+  one pass, using the same in-browser fetch+compute pipeline built for
+  noggin's re-audit earlier the same day (no real downloads, no raw
+  TSVs cached to disk).
+- **Found and fixed two odds-band-parsing false positives** that the
+  account-1/noggin2 exclusion list didn't cover, both caught by manual
+  review of the parsed output before finalizing (see PROJECT.md "Odds
+  band parsing" for the details and the general lesson about anchoring
+  the preceding/following-word regex correctly):
+  - Slot 31 "TURF STRAIGHTS GB WEEK 16 - 24 9.01 - 1000.00" — regex's
+    first match "16 - 24" is a week-number range, not odds. Added
+    `week`/`wk` to the preceding-word exclusion list. Recomputing with
+    the real band (9.01-1000) changed this slot from 388 bets/P&L(BF)
+    9.23 to 1956 bets/P&L(BF) 94.42 — a large enough swing that the
+    first pass would have been materially wrong if left unreviewed.
+  - Slot 52 "CHELT FEST IRISH 3-4runTR" — "3-4" is a runners-count
+    range, not odds. Added `run`/`runs`/`runtr` to the following-word
+    exclusion list.
+  - Root cause for both: the preceding-word regex used `$`-anchoring
+    without allowing for whitespace between the word and the number
+    (`([A-Za-z]+)$` fails to match "WEEK " with a trailing space) —
+    fixed to `([A-Za-z]+)\s*$`. Re-verified slots 1–30 (processed
+    before the fix) by inspection — none of them had a second number
+    range or an exclusion word adjacent to the real one, so no
+    re-computation was needed for those.
+- Also mistakenly skipped two real slots (59 "7YO 8YO 46+ DSLWR" and
+  86 "3YO UP CLASS") partway through, having confused this account's
+  slot-number gaps with account 1's — caught by a row-count check
+  against the bulk report (expected 81, only had 79) before finalizing,
+  and both slots were fetched and added.
+- One slot (51 "351 D SOF M") hit the 10,000-row download cap, flagged
+  the same way as noggin's slot 82.
+- Merged into `System_Audits/HRB_System_Performance_Audit_noggin3.xlsx`
+  via new `System_Audits/build_noggin3_audit.py`. All 81 real slots
+  present, no duplicates, verified against the bulk-report slot list.
+  Sent to the CEO.
+- **Status: noggin, noggin2, and noggin3 audits are now all complete.**
+  Accounts 4 and 5 still not started.
+
+## 2026-07-31 (noggin account 1 completed)
+
+- **Completed the noggin (account 1) system audit** - the 37 slots still
+  pending after this morning's rate-limit lockout, once the CEO
+  re-logged into the account and handed off the browser session.
+  Same odds-band-parse / saved+1-date-filter / BF-commission-formula
+  pipeline as noggin2, ported to JS and run in-browser (see PROJECT.md
+  "Fetching per-bet data via in-page fetch" for why: real download
+  clicks silently stopped working partway through, Chrome was blocking
+  automatic downloads with no page-visible signal).
+- Paced one slot at a time with a ~3s gap between each, per the CEO's
+  explicit instruction to match noggin2's pace and avoid repeating the
+  account-1 lockout. No blocks encountered this time.
+- Slot 82 ("MM") hit the 10,000-row per-request download cap - flagged
+  in its Odds Parsing Note rather than treated as a final number, since
+  the true post-saved-date bet count may be higher.
+- Fixed a bug loading the pre-existing 55 "Done" rows: two of them
+  (slots 11, 14) had a corrupted "P/L by Year (BF)" cell in the
+  original account-1 workbook - Excel had auto-formatted a
+  single-year "YYYY: value" string as a time value. Detected and
+  skipped just the by-year breakdown for those two rows (their totals
+  were unaffected); flagged in script output rather than silently
+  dropped.
+- Merged into `System_Audits/HRB_System_Performance_Audit_noggin_FINAL.xlsx`
+  via new `System_Audits/build_noggin_final.py` - all 92 real slots
+  present (gaps at 21, 31, 59, 72, 76, 77, 81, 86 don't exist on this
+  account), no duplicates. Sent to the CEO.
+- **Status: both noggin and noggin2 audits are now complete.** Accounts
+  3, 4, 5 still not started.
+
+## 2026-07-31 (post-review fix)
+
+- **Fixed a name-parsing bug in the odds-band regex**, caught by the CEO
+  reviewing slot 96 (`YORK MAY MEETING 240 - 300 dslr`) — the "240 -
+  300" was Days Since Last Run, not an odds band, and was wrongly
+  applied as a price filter (giving 0 bets). Scanned all 88 names for
+  the same pattern before patching just the one slot — found **8
+  affected systems total**: 11, 21, 43, 68, 70, 96, 97, 100. In three of
+  them (21, 43, 70) the false match was masking a genuine odds band
+  later in the same name, so those weren't just missing data, they were
+  wrong.
+- Fixed `parse_odds_band()` in `build_noggin2_audit.py` to skip a
+  matched number range when it's glued to "class" (race class, e.g.
+  "class6 - 7") or immediately followed by "DSLR"/"SOF"/"ClaimJock"
+  (none of which are odds), and keep scanning for a later genuine match
+  in the same name instead of just taking the first regex hit.
+- Added an **Odds Parsing Note** column to the output so any
+  skip/rejection is visible rather than silent.
+- Recomputed all 88 systems from the already-downloaded raw TSVs — no
+  new HRB requests needed, this was a pure local parsing fix. Updated
+  `HRB_System_Performance_Audit_noggin2.xlsx` sent to the CEO.
+
+## 2026-07-31 (overnight, unattended)
+
+- **Completed the noggin2 (account 2) system audit.** Fetched raw
+  per-bet qualifier history for all 84 remaining slots (everything in
+  the `SLOTS` dict except the 4 already done in the earlier session:
+  slots 4, 28, 58, 69) via the Recall → Quals → XLS flow documented in
+  PROJECT.md, using Claude in Chrome against the already-authenticated
+  `noggin2` session.
+- No blocks or rate-limit issues encountered — paced requests with a
+  few seconds' gap between each slot the whole way through, per the
+  explicit instruction to avoid repeating account 1's lockout. All 84
+  slots completed cleanly in one pass.
+- Raw TSV downloads for all 84 slots saved to `System_Audits/noggin2_raw/`
+  (now 88 files total, one per slot, 4-100 excluding gaps in slot
+  numbering that don't exist on this account).
+- Ran `System_Audits/build_noggin2_audit.py` against the full set: it
+  reports 88 of 88 systems processed, 0 missing. Final workbook written
+  to `System_Audits/HRB_System_Performance_Audit_noggin2.xlsx`
+  (supersedes the earlier 4-row `..._TEST.xlsx`). No changes made to
+  the audit formulas (odds-band parse, saved+1 filter, P/L(BF)
+  commission formula) — used exactly as validated in the test batch.
+- Note: during decoding, one intermediate console-message payload
+  (slot 3, first attempt) came back corrupted from a manual
+  copy/paste transcription step and had to be re-fetched — fixed by
+  padding all subsequent console.log payloads so they reliably route
+  through the tool's auto-save-to-file path instead of being echoed
+  inline. No data integrity issue in the final files — verified by
+  comparing decoded byte length against the browser-reported original
+  fetch length for every slot.
+- **Status: noggin2 audit is now complete and ready for CEO review.**
+  Accounts 3, 4, 5 still not started. Account 1 (noggin) still has 42
+  slots pending, blocked on the rate-limit lockout from 2026-07-31
+  morning.
+
+## 2026-07-31
+
+- **Wrote PROJECT.md and this CHANGELOG.md** so the project can survive
+  a context reset without the CEO having to re-explain everything from
+  scratch. Prompted by exactly that happening this session.
+- **Resumed the system audit on account 2 (noggin2)**, since account 1
+  (noggin) is still locked out from this morning's rate-limit incident
+  (HRB blocked it for sending requests too fast; block was noted to
+  lift "~31 Jul 2026 11:44").
+- Initially assumed noggin2's slot numbers would mirror account 1's —
+  **wrong**. Confirmed with the CEO that all five HRB accounts hold
+  completely independent sets of systems. Course-corrected before doing
+  any real work on the wrong assumption.
+- Lost the methodology context from a prior session (this session's
+  memory didn't retain it) and had to ask the CEO to re-explain the
+  project goals and audit approach from scratch. This is the direct
+  reason PROJECT.md now exists — should prevent a repeat.
+- Reverse-engineered the full HRB mechanics for pulling per-system,
+  per-bet historical data via live browser exploration (Claude in
+  Chrome) — see PROJECT.md "How the audit actually works" for the full
+  writeup. Headline discoveries:
+  - `v4savedsystems.php?userchoicego=1` with period=999 gives every
+    system's SAVED date + baseline stats in one request (huge
+    efficiency win vs. checking each slot individually).
+  - Recall → Quals → XLS gives up to 10,000 rows of real per-bet
+    history (`Odds_Numeric` = SP "to-1", `Odds_Exchange` = real
+    archived Betfair SP decimal) — full history, not filtered by saved
+    date, so that filtering happens locally.
+  - HRB's own reported "P/L(BF)" is a theoretical estimate (per HRB's
+    own help docs: "Betfair Backing Estimated Price Settings"), not the
+    real archived price. Decided with the CEO to compute our own,
+    correct figure from real `Odds_Exchange` data instead:
+    `(Odds_Exchange - 1) * 0.95` on wins, `-1` on losses.
+  - Odds bands are parsed from the system's name text (no dedicated UI
+    field exists for this) — same convention as the account-1 workbook.
+- Validated the full pipeline on a 4-slot test batch (slots 4, 28, 58,
+  69) before committing to all 88 slots, per the CEO's request to keep
+  the pace slow after this morning's lockout. Slot 58 (no odds
+  restriction) matched HRB's own SP and BF figures exactly, confirming
+  the formulas are correct.
+- Built `System_Audits/build_noggin2_audit.py` (reusable computation
+  script) and `System_Audits/HRB_System_Performance_Audit_noggin2_TEST.xlsx`
+  (4-row output for review).
+- Raw per-bet downloads for the 4 test slots saved to
+  `System_Audits/noggin2_raw/` for reuse.
+- **Status at end of session: waiting on CEO review of the test output**
+  before running the remaining 84 slots on noggin2.
+
+## 2026-07-30 and earlier (reconstructed from repo state, not directly observed)
+
+- Initial commit, `.gitignore` added (`.env` excluded).
+- `bfbm_tips_reference.md` and `claude_code_bfbm_pipeline_prompt.md`
+  added — the spec for the eventual selections→BFBM CSV pipeline
+  (phase 2 of the project, not yet started).
+- Account 1 (noggin) system audit begun:
+  `System_Audits/HRB_System_Performance_Audit_noggin.xlsx` — 58 of 100
+  slots completed ("Done"), remaining 42 marked
+  `PENDING - blocked by HRB System Builder rate limit` after the
+  account got rate-limited from requests being sent too fast.

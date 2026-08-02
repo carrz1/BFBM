@@ -1,0 +1,209 @@
+==============================================================================
+STEP 1 - VALIDATION: recomputed from raw vs. the signed-off workbooks
+==============================================================================
+Systems checked: 421   exact matches: 321
+No raw TSV (excluded): [('noggin', 82, 'MM')]
+
+Mismatches by cause:
+  date-drift       83 systems   median |bets diff|     2.0   max      36
+  date-drift(cap-shift)   8 systems   median |bets diff|   202.5   max     555
+  date-drift(partial-day)   6 systems   median |bets diff|     1.0   max       2
+  truncated-raw     3 systems   median |bets diff|  3635.0   max   12378
+
+  date-drift      - HRB adds qualifiers daily and the raw was downloaded after
+                    the workbook was built. Confirmed, not assumed: truncating
+                    the fresh data at a date near the build date reproduces the
+                    workbook figure exactly. Benign.
+  date-drift(cap-shift)
+                  - same cause, on a slot whose download is capped at 10,000
+                    rows: new rows arriving push old ones off the bottom, so
+                    the post-saved-date count can fall as well as rise. Benign.
+  truncated-raw   - noggin3/51, noggin4/97, noggin5/39: cached raw is the capped
+                    download; the workbook holds the corrected merged figure.
+  system-changed  - noggin 1-57 only. NOT drift: no cutoff in the build window
+                    reproduces the workbook figure, and most of these are
+                    UNCAPPED slots showing FEWER bets than the workbook, which
+                    daily accumulation cannot produce (it only adds). The
+                    qualifier set itself has moved - edited criteria, or
+                    dynamic criteria re-evaluating against newer data. Slot 53
+                    ("NEWTONclaude", saved 2026-07-05) is the clearest case.
+
+No unexplained mismatches. Proceeding with the raw per-bet data
+as ground truth: it reflects the systems as they exist today,
+which is what a live pipeline would actually fire.
+
+==============================================================================
+STEP 2 - PORTFOLIO OVERLAP (all five accounts pooled)
+==============================================================================
+Systems contributing bets : 418
+Naive system-bet rows     : 305,468
+Distinct real-world bets  : 175,149
+Overlap ratio             : 1.744x (42.7% of rows are duplicates)
+Date span                 : 2012-09-17 to 2026-07-31
+
+How many systems fired on the same horse+race:
+    1 system(s):  110,980 bets  (63.36%)
+    2 system(s):   33,145 bets  (18.92%)
+    3 system(s):   14,940 bets  ( 8.53%)
+    4 system(s):    6,848 bets  ( 3.91%)
+    5 system(s):    5,057 bets  ( 2.89%)
+    6 system(s):    1,815 bets  ( 1.04%)
+    7 system(s):    1,000 bets  ( 0.57%)
+    8 system(s):      593 bets  ( 0.34%)
+    9 system(s):      297 bets  ( 0.17%)
+   10 system(s):      198 bets  ( 0.11%)
+   11 system(s):      116 bets  ( 0.07%)
+   12 system(s):       79 bets  ( 0.05%)
+   13 system(s):       34 bets  ( 0.02%)
+   14 system(s):       14 bets  ( 0.01%)
+   15 system(s):        7 bets  ( 0.00%)
+   16 system(s):       15 bets  ( 0.01%)
+   17 system(s):        4 bets  ( 0.00%)
+   18 system(s):        3 bets  ( 0.00%)
+   19 system(s):        2 bets  ( 0.00%)
+   23 system(s):        1 bets  ( 0.00%)
+   24 system(s):        1 bets  ( 0.00%)
+
+How many *accounts* fired on the same horse+race:
+    1 account(s):  137,861 bets  (78.71%)
+    2 account(s):   27,179 bets  (15.52%)
+    3 account(s):    7,594 bets  ( 4.34%)
+    4 account(s):    2,128 bets  ( 1.21%)
+    5 account(s):      387 bets  ( 0.22%)
+
+Cross-account duplicated bets: 37,288 (21.3% of distinct bets)
+
+==============================================================================
+STEP 3 - NAIVE vs DEDUPLICATED P/L(BF)
+==============================================================================
+Naive  (sum of per-system rows):    30,191.11 over  305,468 bets   ROI   9.88%
+Dedup  (one stake per horse)   :    11,893.49 over  175,149 bets   ROI   6.79%
+
+P/L attributable to double-counting: 18,297.62 (60.6% of the naive figure)
+
+Per-year:
+      naive_plbf  naive_bets  dedup_plbf  dedup_bets  naive_roi%  dedup_roi%
+year                                                                        
+2012      -10.72          24      -10.72          24      -44.67      -44.67
+2013       27.58          34       27.58          34       81.12       81.12
+2014        3.90          34        3.90          34       11.48       11.48
+2015       94.07          42       94.07          42      223.97      223.97
+2016       98.85         785       98.85         785       12.59       12.59
+2017     -293.42        2262     -280.19        2230      -12.97      -12.56
+2018      398.51        2763      311.50        2662       14.42       11.70
+2019     2258.89        4543     2183.67        4285       49.72       50.96
+2020     1086.93        7725      484.30        6888       14.07        7.03
+2021      939.09       18668      626.75       13265        5.03        4.72
+2022     4142.22       27251     2787.50       17256       15.20       16.15
+2023     1559.48       40240      614.15       24627        3.88        2.49
+2024     5600.74       53729      797.73       31608       10.42        2.52
+2025     8901.41       79160     3948.13       41352       11.24        9.55
+2026     5383.59       68208      206.29       30057        7.89        0.69
+
+==============================================================================
+STEP 4 - PER-ACCOUNT CONTRIBUTION AND PAIRWISE OVERLAP
+==============================================================================
+account  systems  naive_bets  unique_bets  internal_overlap  naive_plbf
+ noggin       91       46539        37140             1.253     7207.39
+noggin2       87       35895        28556             1.257     3400.85
+noggin3       81       68435        53377             1.282    11367.27
+noggin4       92      119836        76651             1.563     4107.52
+noggin5       67       34763        29724             1.170     4108.07
+
+Pairwise shared distinct bets (count, and % of the smaller set):
+                noggin        noggin2        noggin3        noggin4        noggin5
+noggin          37,140  5,744 (20.1%)  9,208 (24.8%)  6,767 (18.2%)  5,892 (19.8%)
+noggin2  5,744 (20.1%)         28,556  5,394 (18.9%)  7,704 (27.0%)  5,473 (19.2%)
+noggin3  9,208 (24.8%)  5,394 (18.9%)         53,377  7,411 (13.9%)  5,658 (19.0%)
+noggin4  6,767 (18.2%)  7,704 (27.0%)  7,411 (13.9%)         76,651  7,348 (24.7%)
+noggin5  5,892 (19.8%)  5,473 (19.2%)  5,658 (19.0%)  7,348 (24.7%)         29,724
+
+==============================================================================
+STEP 5 - THE MOST-DUPLICATED SELECTIONS
+==============================================================================
+Top 10 horse+race combinations by number of systems firing:
+                                                      systems  accounts  pl_bf    won
+bet_key                                                                              
+2026-07-01|15:55:00|Worcester|Mojo Ego (IRE)               24         5  16.15   True
+2026-06-08|19:48:00|Roscommon|Made U Look (IRE)            23         5  -1.00  False
+2026-07-20|14:42:00|Cartmel|Less Destiny Star (IRE)        19         5  -1.00  False
+2026-07-19|14:48:00|Stratford|Kotgar (IRE)                 19         4  -1.00  False
+2026-03-29|16:27:00|Downpatrick|Money Heist (IRE)          18         5  -1.00  False
+2026-04-04|15:10:00|Newton Abbot|Northern Air (IRE)        18         5  -1.00  False
+2025-07-22|19:12:00|Ballinrobe|Drumcliff Bay (IRE)         18         4  -1.00  False
+2026-05-26|19:30:00|Ballinrobe|Can Happen (IRE)            17         5  12.54   True
+2026-07-06|19:50:00|Roscommon|Double Power (IRE)           17         5  -1.00  False
+2025-10-04|15:05:00|Gowran Park|Elusive Prince (IRE)       17         5  -1.00  False
+
+System pairs that most often fire on the same bet (candidate near-duplicates):
+system A      system B        shared   A bets   B bets   jaccard
+noggin4:13    noggin4:62       5,097    5,097    9,363     0.544
+noggin4:38    noggin4:97       4,565    4,801   10,000     0.446
+noggin4:3     noggin4:38       4,170    4,384    4,801     0.832
+noggin4:59    noggin4:62       4,118    4,119    9,363     0.440
+noggin4:3     noggin4:97       4,111    4,384   10,000     0.400
+noggin4:26    noggin4:51       3,434    6,076    5,386     0.428
+noggin3:49    noggin3:90       3,242    5,120    5,262     0.454
+noggin4:34    noggin4:62       2,931    2,975    9,363     0.312
+noggin4:26    noggin4:97       2,927    6,076   10,000     0.223
+noggin4:13    noggin4:59       2,794    5,097    4,119     0.435
+noggin4:6     noggin4:62       2,342    2,349    9,363     0.250
+noggin4:51    noggin4:97       2,324    5,386   10,000     0.178
+noggin4:38    noggin4:51       2,319    4,801    5,386     0.295
+noggin4:13    noggin4:6        2,178    5,097    2,349     0.413
+noggin4:34    noggin4:59       2,161    2,975    4,119     0.438
+
+==============================================================================
+STEP 6 - COMMON-WINDOW VIEW (the number that matters for going live)
+==============================================================================
+Systems already live (first qualifying bet on/before 1 Jan):
+  2022: 127 of 418 systems (30%)
+  2023: 166 of 418 systems (40%)
+  2024: 266 of 418 systems (64%)
+  2025: 325 of 418 systems (78%)
+  2026: 371 of 418 systems (89%)
+
+2026 year-to-date (from 2026-01-01, 400 systems firing):
+  naive :   5,383.59 over  68,208 bets   ROI   7.89%
+  dedup :     206.29 over  30,057 bets   ROI   0.69%
+  -> 55.9% of the bets, and 96.2% of the profit, is duplication
+
+last 12 months (from 2025-08-01, 416 systems firing):
+  naive :   9,546.50 over 105,237 bets   ROI   9.07%
+  dedup :   1,747.65 over  48,967 bets   ROI   3.57%
+  -> 53.5% of the bets, and 81.7% of the profit, is duplication
+
+Caveat: 'stale-legacy' and 'truncated-raw' systems (Step 1) are
+included on their raw figures; the three truncated ones under-
+contribute. Neither materially moves a portfolio of 418 systems.
+
+==============================================================================
+STEP 7 - IS AGREEMENT A SIGNAL? (ROI by number of systems firing)
+==============================================================================
+
+All years (deduplicated bets):
+ systems     bets    win%  med odds    P/L(BF)    ROI%
+       1  110,980   10.19     14.71   6,268.41    5.65
+       2   33,145    8.28     18.35   1,098.03    3.31
+       3   14,940    7.41     18.20   1,800.33   12.05
+     4-5   11,905    6.48     22.32   1,496.29   12.57
+     6-9    3,705    6.02     23.06   1,059.65   28.60
+     10+      474    5.49     25.55     170.78   36.03
+
+Last 12 months (deduplicated bets):
+ systems     bets    win%  med odds    P/L(BF)    ROI%
+       1   24,594    9.65     15.07     329.14    1.34
+       2   10,983    7.68     19.00    -226.85   -2.07
+       3    5,894    6.29     19.98     485.62    8.24
+     4-5    4,976    6.15     22.03     403.38    8.11
+     6-9    2,142    5.65     23.00     531.72   24.82
+     10+      378    6.35     24.45     224.64   59.43
+
+Read with care: these systems were hand-built and hand-selected by the same
+person, so 'independent agreement' is not statistically independent, and the
+high-agreement buckets sit at longer odds where variance is widest. But the
+direction is consistent across both windows and the 6+ bucket holds a few
+thousand bets, so an agreement threshold looks like a far better lever than
+running all 418 systems flat.
+
+Wrote cross_account_all_system_bets.csv, cross_account_dedup_bets.csv, cross_account_validation.csv
