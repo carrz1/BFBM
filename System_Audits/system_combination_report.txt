@@ -1,0 +1,189 @@
+====================================================================================================
+PAIRWISE PERFORMANCE - pairs with >= 20 co-fired bets (1990 of 12213 pairs qualify)
+====================================================================================================
+
+--- TOP 20 pairs by ROI ---
+  system_a                         name_a   system_b                         name_b  bets  win_pct  pl_bf  roi_pct
+noggin4:13                  NH CHP LTO v3 noggin5:60          ss 9YO 10YO 11YOs  NH    20    10.00 204.35  1021.74
+noggin4:62                     NH CHP LTO noggin5:60          ss 9YO 10YO 11YOs  NH    20    10.00 204.35  1021.74
+noggin2:11            HDGRdiff class6 - 7 noggin5:63  SS AW 7f 2yo3yo 8.01 - 500.00    20    10.00 200.44  1002.21
+ noggin5:1      SS NH Diff HDGR Diff CODE  noggin:79 NH HDGRDiff 6.01 - 1000.00 CHP    23     4.35 214.42   932.25
+noggin5:97         SS 4YO GB STRAIGHTS UK  noggin:35 SS 4YO STRAIGHTS all BSPs Jan-    39     7.69 324.46   831.94
+ noggin2:4     NH HDGRdiff 10.01 - 400.00 noggin5:91 NH FMs 61-240DSLR 30.00-300.00    24     4.17 175.55   731.46
+noggin3:26   UK TURF VISOR 29.01 - 105.00 noggin3:51                    351 D SOF M    21    19.05 141.22   672.49
+noggin3:93   AW NEW TRAINER 9.00 - 300.00 noggin5:63  SS AW 7f 2yo3yo 8.01 - 500.00    21     4.76 132.89   632.82
+noggin4:72         SS 4YO GB straits 2023 noggin5:97         SS 4YO GB STRAIGHTS UK    55     5.45 339.71   617.66
+noggin5:10     JClaim v LTO 6.01 - 150.00  noggin:35 SS 4YO STRAIGHTS all BSPs Jan-    20     5.00 113.05   565.25
+noggin4:23    TRESEARCH - JockClaim v LTO  noggin:42                  4YO STRAIGHTS    21    28.57 116.83   556.34
+noggin4:88 SS HDGRdiff Draw 13plus SOF 7.  noggin:99 SS HDGRdiff STRTs 7.01 - 500.0    21    19.05 116.00   552.38
+ noggin2:4     NH HDGRdiff 10.01 - 400.00  noggin:89     SS HDGRdiff 80.01 - 250.00    32     3.12 167.55   523.59
+ noggin:47 FIRST RUN NEW TRAINER ALL BSPs  noggin:75 MM NH 0-7 runs HDGR 4.01 - 100    30    23.33 154.93   516.45
+noggin3:60           STRs 10 DSLR or less noggin3:90         4YO STR 8.01 - 1000.00   193     6.22 986.75   511.27
+noggin3:49  4YO STRAIGHTS 12.01 - 1000.00 noggin3:60           STRs 10 DSLR or less   186     4.30 950.50   511.02
+noggin3:28    UK TURF VISOR 30.01 - 65.00 noggin3:51                    351 D SOF M    27    14.81 135.22   500.82
+ noggin2:4     NH HDGRdiff 10.01 - 400.00  noggin5:1      SS NH Diff HDGR Diff CODE    42     4.76 210.19   500.46
+noggin2:21 HDGRdiff class6 - 7 BSP12.01-3  noggin:66 SS AW WON HIGHER CLASS 8.01-10    43     9.30 211.96   492.93
+noggin2:21 HDGRdiff class6 - 7 BSP12.01-3  noggin:47 FIRST RUN NEW TRAINER ALL BSPs    32     6.25 144.77   452.41
+
+--- BOTTOM 20 pairs by ROI ---
+  system_a                         name_a   system_b                         name_b  bets  win_pct  pl_bf  roi_pct
+ noggin5:2 NH 2.01 - 500.00 5lbs LTO 2.01  noggin:25 SS MM NH 6-36 RUNS 12.01 - 300    30      0.0  -30.0   -100.0
+noggin2:13 SS NH CHP LTO 2.01 - 300.00 IR  noggin:24      MM IRISH NH 9.01 - 200.00    22      0.0  -22.0   -100.0
+noggin3:61    Jock Claim 7lbs-10lbs v LTO  noggin:79 NH HDGRDiff 6.01 - 1000.00 CHP    32      0.0  -32.0   -100.0
+ noggin2:7                   IRE HDGRdiff noggin4:40 SS Blinkers Turf UK 8.01 - 100    39      0.0  -39.0   -100.0
+noggin2:31              D&G 7.01 - 300.00 noggin4:41 DSLR and 2ndLR 12.0 to 35.0 BS    31      0.0  -31.0   -100.0
+ noggin2:7                   IRE HDGRdiff  noggin:50      4YO STRAIGHTS 0 DIST WINS    24      0.0  -24.0   -100.0
+ noggin2:7                   IRE HDGRdiff  noggin:18     HDGRdiff JULY 14.01-400.00    20      0.0  -20.0   -100.0
+noggin4:49 SS 4YO TURF JUNE GB All BSPs 3  noggin:68 SSGB 4YOs TURF 12.01 - 1000.00    28      0.0  -28.0   -100.0
+noggin3:49  4YO STRAIGHTS 12.01 - 1000.00 noggin3:63    4YO STR 2runsTR 3plusCAREER    22      0.0  -22.0   -100.0
+noggin3:49  4YO STRAIGHTS 12.01 - 1000.00 noggin3:58         NEW TRAINER 2.01-30.00    23      0.0  -23.0   -100.0
+noggin2:89 SS WINDOP FTO and WINDOP1RUN 1 noggin3:17            GELDED 7.01 - 65.00    23      0.0  -23.0   -100.0
+noggin4:41 DSLR and 2ndLR 12.0 to 35.0 BS noggin5:42    HDGR DIFF v4 NH 3.01-300.00    22      0.0  -22.0   -100.0
+noggin2:70 SS MM CLASS 1-3 ClaimJock 14.0 noggin5:10     JClaim v LTO 6.01 - 150.00    29      0.0  -29.0   -100.0
+noggin2:70 SS MM CLASS 1-3 ClaimJock 14.0 noggin5:15    C Placed NH GB IRE 0lbs LTO    23      0.0  -23.0   -100.0
+noggin2:61 IRE NH RH TRACKS 12.01 - 65.00 noggin4:96  C Placed NH v2 5.01 - 1000.00    34      0.0  -34.0   -100.0
+noggin3:50    NH NEW TRAINER 18.00-150.00 noggin4:73 CHELT 2023 IRISH IRE horses 14    23      0.0  -23.0   -100.0
+ noggin:35 SS 4YO STRAIGHTS all BSPs Jan-  noggin:68 SSGB 4YOs TURF 12.01 - 1000.00    27      0.0  -27.0   -100.0
+noggin2:13 SS NH CHP LTO 2.01 - 300.00 IR noggin4:56 DSLR and 2ndLR NHflatHurdle 9.    28      0.0  -28.0   -100.0
+noggin5:60          ss 9YO 10YO 11YOs  NH noggin5:61 2018 9YOs 10YOs 13.00 - 51.00     26      0.0  -26.0   -100.0
+noggin2:21 HDGRdiff class6 - 7 BSP12.01-3 noggin2:52 SS AW HDGRdiff 7F - 1m.5F 14.0    49      0.0  -49.0   -100.0
+
+--- TOP 20 pairs by sample size (most frequent co-firers) ---
+  system_a                         name_a   system_b                         name_b  bets  win_pct   pl_bf  roi_pct
+noggin4:13                  NH CHP LTO v3 noggin4:62                     NH CHP LTO  5097     9.20   96.98     1.90
+noggin4:38        NH 0 RUNS 6.01 - 270.00 noggin4:97            0 RUNS HDGR NH COMP  4565     6.99  120.80     2.65
+ noggin4:3 N4-97 0 RUNS HDGR NH COMP 6.01 noggin4:38        NH 0 RUNS 6.01 - 270.00  4170     7.31  337.62     8.10
+noggin4:59   NH CHP LTO v3 2.01 - 1000.00 noggin4:62                     NH CHP LTO  4118     8.67  201.35     4.89
+ noggin4:3 N4-97 0 RUNS HDGR NH COMP 6.01 noggin4:97            0 RUNS HDGR NH COMP  4111     7.30  329.00     8.00
+noggin4:26    0 RUNS IRE FR 12.01 - 80.00 noggin4:51 0 RUNS IRE FR v2 12.01 - 300.0  3434     4.80  168.12     4.90
+noggin3:49  4YO STRAIGHTS 12.01 - 1000.00 noggin3:90         4YO STR 8.01 - 1000.00  3242     4.23 1729.70    53.35
+noggin4:34   NH CHP LTO v3 10.01 - 300.00 noggin4:62                     NH CHP LTO  2931     4.71  433.13    14.78
+noggin4:26    0 RUNS IRE FR 12.01 - 80.00 noggin4:97            0 RUNS HDGR NH COMP  2927     5.02  218.64     7.47
+noggin4:13                  NH CHP LTO v3 noggin4:59   NH CHP LTO v3 2.01 - 1000.00  2794     9.02  285.77    10.23
+ noggin4:6       NH CHP LTO 3.01 - 300 v3 noggin4:62                     NH CHP LTO  2342     8.33  463.69    19.80
+noggin4:51 0 RUNS IRE FR v2 12.01 - 300.0 noggin4:97            0 RUNS HDGR NH COMP  2324     4.95   65.91     2.84
+noggin4:38        NH 0 RUNS 6.01 - 270.00 noggin4:51 0 RUNS IRE FR v2 12.01 - 300.0  2319     4.96   70.91     3.06
+noggin4:13                  NH CHP LTO v3  noggin4:6       NH CHP LTO 3.01 - 300 v3  2178     8.45  505.57    23.21
+noggin4:34   NH CHP LTO v3 10.01 - 300.00 noggin4:59   NH CHP LTO v3 2.01 - 1000.00  2161     4.72  402.27    18.61
+noggin3:95     FMs FLAT JUNE 9.01 - 80.00 noggin3:98     FMs FLAT JUNE 5.01 - 80.00  2140     6.17  172.04     8.04
+noggin4:26    0 RUNS IRE FR 12.01 - 80.00 noggin4:38        NH 0 RUNS 6.01 - 270.00  2131     5.02  178.73     8.39
+ noggin4:3 N4-97 0 RUNS HDGR NH COMP 6.01 noggin4:51 0 RUNS IRE FR v2 12.01 - 300.0  2090     5.12  180.03     8.61
+noggin4:13                  NH CHP LTO v3 noggin4:34   NH CHP LTO v3 10.01 - 300.00  2055     5.06  608.64    29.62
+noggin4:26    0 RUNS IRE FR 12.01 - 80.00  noggin4:3 N4-97 0 RUNS HDGR NH COMP 6.01  1844     5.26  290.89    15.78
+
+====================================================================================================
+LARGE-SAMPLE PAIRS (>= 300 co-fired bets) - the low-noise, decision-worthy tier
+====================================================================================================
+121 pairs qualify.
+
+
+--- BEST large-sample pairs (>=300 bets) by ROI ---
+  system_a                           name_a   system_b                           name_b  bets  win_pct  roi_pct
+noggin3:49    4YO STRAIGHTS 12.01 - 1000.00  noggin:35 SS 4YO STRAIGHTS all BSPs Jan-Ju   657     3.81    70.94
+ noggin:24        MM IRISH NH 9.01 - 200.00  noggin:75  MM NH 0-7 runs HDGR 4.01 - 1000   556     6.12    65.56
+noggin2:21 HDGRdiff class6 - 7 BSP12.01-300  noggin2:5    HDGRdiff FLAT AW 8.01 - 80.00   470     6.38    62.81
+ noggin2:5    HDGRdiff FLAT AW 8.01 - 80.00 noggin4:53           BLINKERS 5.01 -1000.00   433     7.16    61.08
+noggin4:72           SS 4YO GB straits 2023  noggin:42                    4YO STRAIGHTS   376     9.84    56.97
+ noggin:25 SS MM NH 6-36 RUNS 12.01 - 300.0  noggin:75  MM NH 0-7 runs HDGR 4.01 - 1000   315     6.03    55.36
+noggin2:11              HDGRdiff class6 - 7 noggin2:21 HDGRdiff class6 - 7 BSP12.01-300  1142     5.17    55.06
+noggin3:49    4YO STRAIGHTS 12.01 - 1000.00 noggin3:90           4YO STR 8.01 - 1000.00  3242     4.23    53.35
+noggin4:34     NH CHP LTO v3 10.01 - 300.00  noggin4:6         NH CHP LTO 3.01 - 300 v3  1295     4.86    50.39
+noggin2:11              HDGRdiff class6 - 7  noggin2:5    HDGRdiff FLAT AW 8.01 - 80.00   599     7.35    49.09
+noggin2:49      SS NH CHP LTO 2.01 - 300.00  noggin4:6         NH CHP LTO 3.01 - 300 v3   475     9.47    43.67
+noggin2:21 HDGRdiff class6 - 7 BSP12.01-300  noggin4:8     HDGRdiff Class 6 14.01-80.00   767     5.35    42.64
+noggin3:49    4YO STRAIGHTS 12.01 - 1000.00 noggin4:72           SS 4YO GB straits 2023   455     3.74    41.44
+noggin2:11              HDGRdiff class6 - 7  noggin4:8     HDGRdiff Class 6 14.01-80.00   768     5.21    40.67
+noggin2:11              HDGRdiff class6 - 7 noggin5:39       HDGR DIFF v2 14.01 - 80.00   371     4.85    38.84
+
+--- WORST large-sample pairs (>=300 bets) by ROI ---
+  system_a                        name_a   system_b                           name_b  bets  win_pct  roi_pct
+noggin3:49 4YO STRAIGHTS 12.01 - 1000.00 noggin3:74  SS 4YO Gelding 5f-7f 16-25 DSLR   315     3.17   -42.53
+noggin4:13                 NH CHP LTO v3  noggin:79 NH HDGRDiff 6.01 - 1000.00 CHP a   321     3.43   -34.05
+ noggin:24     MM IRISH NH 9.01 - 200.00  noggin:93          MM 9.01 - 200 NH and AW   333     3.90   -32.83
+ noggin2:4    NH HDGRdiff 10.01 - 400.00 noggin4:13                    NH CHP LTO v3   324     4.63   -26.78
+noggin3:90        4YO STR 8.01 - 1000.00 noggin4:72           SS 4YO GB straits 2023   367     4.36   -25.86
+noggin4:62                    NH CHP LTO  noggin:79 NH HDGRDiff 6.01 - 1000.00 CHP a   359     3.34   -25.53
+noggin4:53        BLINKERS 5.01 -1000.00 noggin4:57               AW CHP LTO 2 to 80   499     6.01   -24.84
+ noggin2:4    NH HDGRdiff 10.01 - 400.00 noggin4:62                       NH CHP LTO   366     4.37   -23.75
+ noggin5:8    TURF IRE FMs 14.01 - 80.00  noggin:94     IRISH FLAT FM 10.01 - 200.00   644     3.11   -23.18
+noggin5:45                Leicester DRAW noggin5:87               Leicester DRAW v1A   322    12.11   -21.85
+ noggin:24     MM IRISH NH 9.01 - 200.00  noggin:97              MM NH 10.01 - 80.00   973     4.11   -19.37
+noggin3:79      4YO---------------------  noggin:42                    4YO STRAIGHTS   442    10.41   -16.82
+noggin2:69   HDGRdiff 5YO-8YO 10.5-65.00 noggin5:39       HDGR DIFF v2 14.01 - 80.00   657     3.81   -15.20
+noggin4:62                    NH CHP LTO noggin5:39       HDGR DIFF v2 14.01 - 80.00   388     3.09   -15.07
+ noggin2:4    NH HDGRdiff 10.01 - 400.00 noggin2:69      HDGRdiff 5YO-8YO 10.5-65.00   409     5.38   -13.28
+
+====================================================================================================
+DO THE TOP PAIRS OUTPERFORM EITHER SYSTEM ALONE?
+====================================================================================================
+  noggin4:13 (NH CHP LTO v3               ) solo ROI    1.90%  +  noggin5:60 (ss 9YO 10YO 11YOs  NH       ) solo ROI   21.81%  -> together (20 bets): 1021.74%
+  noggin4:62 (NH CHP LTO                  ) solo ROI    3.71%  +  noggin5:60 (ss 9YO 10YO 11YOs  NH       ) solo ROI   21.81%  -> together (20 bets): 1021.74%
+  noggin2:11 (HDGRdiff class6 - 7         ) solo ROI   28.00%  +  noggin5:63 (SS AW 7f 2yo3yo 8.01 - 500.0) solo ROI   23.22%  -> together (20 bets): 1002.21%
+  noggin5:1 (SS NH Diff HDGR Diff CODE   ) solo ROI   14.07%  +  noggin:79 (NH HDGRDiff 6.01 - 1000.00 C) solo ROI    5.02%  -> together (23 bets):  932.25%
+  noggin5:97 (SS 4YO GB STRAIGHTS UK      ) solo ROI  111.16%  +  noggin:35 (SS 4YO STRAIGHTS all BSPs Ja) solo ROI   42.99%  -> together (39 bets):  831.94%
+  noggin2:4 (NH HDGRdiff 10.01 - 400.00  ) solo ROI    6.32%  +  noggin5:91 (NH FMs 61-240DSLR 30.00-300.) solo ROI    8.03%  -> together (24 bets):  731.46%
+  noggin3:26 (UK TURF VISOR 29.01 - 105.00) solo ROI   43.21%  +  noggin3:51 (351 D SOF M                 ) solo ROI    5.28%  -> together (21 bets):  672.49%
+  noggin3:93 (AW NEW TRAINER 9.00 - 300.00) solo ROI    6.46%  +  noggin5:63 (SS AW 7f 2yo3yo 8.01 - 500.0) solo ROI   23.22%  -> together (21 bets):  632.82%
+  noggin4:72 (SS 4YO GB straits 2023      ) solo ROI   13.75%  +  noggin5:97 (SS 4YO GB STRAIGHTS UK      ) solo ROI  111.16%  -> together (55 bets):  617.66%
+  noggin5:10 (JClaim v LTO 6.01 - 150.00  ) solo ROI    1.41%  +  noggin:35 (SS 4YO STRAIGHTS all BSPs Ja) solo ROI   42.99%  -> together (20 bets):  565.25%
+
+====================================================================================================
+THREE-WAY COMBINATIONS (>= 15 co-fired bets)
+====================================================================================================
+
+--- TOP 15 triples by ROI ---
+                             systems  bets  win_pct  pl_bf  roi_pct
+ noggin4:72 + noggin5:97 + noggin:42    24     4.17 314.18  1309.10
+noggin2:11 + noggin5:21 + noggin5:63    16    12.50 204.44  1277.77
+noggin2:11 + noggin2:21 + noggin5:63    17    11.76 203.44  1196.72
+ noggin4:13 + noggin4:6 + noggin5:60    18    11.11 206.35  1146.38
+ noggin4:6 + noggin4:62 + noggin5:60    18    11.11 206.35  1146.38
+  noggin5:97 + noggin:35 + noggin:42    32     9.38 331.46  1035.81
+ noggin3:49 + noggin5:97 + noggin:35    32     9.38 331.46  1035.81
+noggin4:13 + noggin4:62 + noggin5:60    20    10.00 204.35  1021.74
+noggin3:49 + noggin4:72 + noggin5:97    36     5.56 347.83   966.20
+  noggin5:16 + noggin5:39 + noggin:9    15    20.00 136.33   908.89
+noggin3:93 + noggin5:21 + noggin5:63    17     5.88 136.89   805.25
+noggin3:49 + noggin3:60 + noggin3:90   128     5.47 996.74   778.70
+noggin3:28 + noggin3:51 + noggin4:37    15    20.00 108.24   721.61
+ noggin2:21 + noggin5:90 + noggin:47    19     5.26 134.89   709.96
+ noggin3:49 + noggin5:10 + noggin:35    17     5.88 116.05   682.65
+
+--- BOTTOM 15 triples by ROI ---
+                             systems  bets  win_pct  pl_bf  roi_pct
+  noggin2:5 + noggin4:68 + noggin4:8    24      0.0  -24.0   -100.0
+noggin3:10 + noggin4:13 + noggin5:39    19      0.0  -19.0   -100.0
+ noggin2:49 + noggin4:62 + noggin:24    16      0.0  -16.0   -100.0
+ noggin2:49 + noggin4:59 + noggin:24    16      0.0  -16.0   -100.0
+  noggin2:4 + noggin4:62 + noggin:24    20      0.0  -20.0   -100.0
+noggin3:65 + noggin4:13 + noggin5:39    17      0.0  -17.0   -100.0
+ noggin3:65 + noggin4:62 + noggin:97    17      0.0  -17.0   -100.0
+noggin3:65 + noggin4:59 + noggin5:39    20      0.0  -20.0   -100.0
+noggin4:13 + noggin4:62 + noggin5:91    15      0.0  -15.0   -100.0
+ noggin2:4 + noggin2:69 + noggin5:10    15      0.0  -15.0   -100.0
+ noggin3:17 + noggin5:90 + noggin:47    38      0.0  -38.0   -100.0
+noggin3:17 + noggin3:58 + noggin5:90    34      0.0  -34.0   -100.0
+ noggin2:5 + noggin3:58 + noggin5:90    24      0.0  -24.0   -100.0
+ noggin2:21 + noggin2:69 + noggin2:7    15      0.0  -15.0   -100.0
+ noggin2:11 + noggin2:21 + noggin:57    31      0.0  -31.0   -100.0
+
+====================================================================================================
+CAVEATS - read before acting on any single pair/triple
+====================================================================================================
+
+- These are the same historical bets the systems were built from - not an
+  out-of-sample test. A pair standing out here may partly reflect that both
+  systems were independently tuned on the same market inefficiencies, not a
+  new discovery.
+- The top-by-ROI table at the 20-bet floor is mostly noise: those
+  pairs mostly show a 0-10% win rate carried to a four-figure ROI% by one or
+  two long-priced winners. Do not act on anything from that table alone.
+  The LARGE-SAMPLE PAIRS section (>=300 bets) is the one worth
+  reading - ROI numbers there are still built on genuine volume.
+- A pair's bets are a *subset* of each system's own bets (only the ones
+  where both fired), so "pair beats both systems solo" is somewhat expected
+  by construction - agreement selects for the more standout runners in each
+  system's coverage, which is the same effect already documented in the
+  "does agreement predict winners" finding. This table is mainly useful for
+  finding *which* systems drive that effect hardest.
+
