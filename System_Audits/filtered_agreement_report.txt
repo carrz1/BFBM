@@ -1,0 +1,62 @@
+Dropped 4 exact-duplicate systems (418 -> 414 distinct systems in the universe)
+
+==========================================================================================
+FILTER: systems with >=100 standalone bets AND standalone ROI >= -5.0%
+==========================================================================================
+Qualifying systems : 220 of 414
+Excluded systems   : 194 (128 for insufficient sample, 66 for a standalone loss > 5.0%)
+Naive bet-rows in the filtered universe: 266,309 of 305,218 (87.3%)
+Distinct bets in the filtered universe : 158,403
+
+==========================================================================================
+P/L BY NUMBER OF QUALIFYING SYSTEMS AGREEING ON THE SAME SELECTION
+==========================================================================================
+Number of Systems   Bets  Wins  Win%  BF_P/L  ROI%
+                1 103339 10403 10.07 7643.90  7.40
+                2  29276  2429  8.30 2574.72  8.79
+                3  12709   948  7.46 1575.20 12.39
+                4   5687   385  6.77  308.46  5.42
+                5   4349   282  6.48 1393.68 32.05
+                6   1438    98  6.82  876.32 60.94
+                7    726    34  4.68   67.77  9.33
+                8    403    22  5.46   53.88 13.37
+                9    214    12  5.61   89.65 41.89
+              10+    262    16  6.11  123.77 47.24
+
+TOTAL              158,403     14629    9.24   14,707.36     9.28
+
+==========================================================================================
+FOR COMPARISON - the same breakdown with NO system-quality filter (all 418 systems)
+==========================================================================================
+Number of Systems   Bets  Win%  BF_P/L  ROI%
+                1 111022 10.19 6250.23  5.63
+                2  33115  8.28 1104.21  3.33
+                3  15008  7.42 1820.71 12.13
+                4   6820  6.63  226.73  3.32
+                5   5030  6.26 1279.22 25.43
+                6   1807  6.70  759.74 42.04
+                7    986  5.88  267.50 27.13
+                8    593  4.38  -20.82 -3.51
+                9    298  5.37   31.20 10.47
+              10+    469  5.54  175.78 37.48
+
+==========================================================================================
+NOTES
+==========================================================================================
+
+- ROI% = 100 * BF_P/L / Bets: profit as a percentage of total staked,
+  assuming a 1-unit stake per bet. ROI 50% -> every 1 unit staked returned
+  1.50 on average; ROI -100% -> every bet in that row lost.
+- "Number of Systems" counts only systems that passed the quality filter -
+  a bet flagged by 6 systems where only 3 pass the filter is bucketed under
+  "3", not "6". This is deliberate: the question is what agreement among
+  systems you'd actually trust looks like, not raw agreement.
+- Sample size still matters at the high end: fewer bets ever reach 8-10+
+  system agreement even before filtering, and the filter removes some of
+  those too. Check the Bets column before treating any one row's ROI as
+  reliable - the same caveat as every other combination report in this
+  project.
+- This is the historical data the systems were tuned on, not a forward
+  test.
+
+Wrote filtered_agreement_qualifying_systems.csv (220 systems) and filtered_agreement_by_count.csv
