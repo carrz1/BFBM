@@ -1,0 +1,95 @@
+===============================================================================================
+HOW MANY DIFFERENT HORSES GET BACKED IN THE SAME RACE, BY YEAR
+===============================================================================================
+year
+2012    1.143
+2013    1.214
+2014    1.097
+2015    1.105
+2016    1.387
+2017    1.614
+2018    1.583
+2019    1.664
+2020    1.713
+2021    1.930
+2022    2.139
+2023    2.562
+2024    2.966
+2025    3.581
+2026    4.364
+
+===============================================================================================
+RACE-LEVEL ROI (1-unit stake per distinct horse backed), 2022 vs 2026, bucketed by how many different horses were backed in that race
+===============================================================================================
+
+--- 2022 (overall race-level ROI: 16.15%) ---
+        races   total_pl  total_stake  roi_pct
+bucket                                        
+1        3654   -78.6645         3654    -2.15
+2        2145   266.7870         4290     6.22
+3        1121  2195.2555         3363    65.28
+4         533   250.9695         2132    11.77
+5         288   -39.1140         1440    -2.72
+6         328   192.2655         2377     8.09
+
+--- 2026 (overall race-level ROI: 0.69%) ---
+        races  total_pl  total_stake  roi_pct
+bucket                                       
+1        1000 -133.1530         1000   -13.32
+2        1123 -247.4865         2246   -11.02
+3        1132  974.3145         3396    28.69
+4         962  -67.5210         3848    -1.75
+5         770   45.6925         3850     1.19
+6        1900 -365.5610        15717    -2.33
+
+===============================================================================================
+P/L BREAKDOWN FOR RACES WITH 4+ SELECTIONS BACKED
+===============================================================================================
+Races with 4+ distinct selections: 16,410
+Individual horse-bets within those races: 93,481
+
+--- Overall (4+ selection races) ---
+Group  Bets  Wins  Win%  BF_P/L  ROI%
+  ALL 93481  7599  8.13 4637.07  4.96
+
+--- By NUMBER OF RUNNERS in the race ---
+Runners  Bets  Wins  Win%  BF_P/L  ROI%
+    2-5   390    76 19.49   -5.11 -1.31
+    6-8 12040  1463 12.15   -7.61 -0.06
+   9-11 30065  2665  8.86 -119.98 -0.40
+  12-14 27542  2070  7.52 3664.65 13.31
+  15-17 12925   789  6.10 1252.64  9.69
+  18-20  5730   312  5.45    4.31  0.08
+    21+  4789   224  4.68 -151.84 -3.17
+
+--- By BF ODDS BAND (Odds_Exchange, the real archived Betfair SP) ---
+   Odds Band  Bets  Wins  Win%  BF_P/L  ROI%
+   1.01-2.00   348   205 58.91   -0.62 -0.18
+   2.01-4.00  3324  1043 31.38 -217.35 -6.54
+   4.01-8.00 13090  2292 17.51 -204.60 -1.56
+  8.01-16.00 25033  2300  9.19  157.99  0.63
+ 16.01-32.00 24791  1220  4.92 1063.11  4.29
+ 32.01-64.00 15065   411  2.73 1701.99 11.30
+64.01-128.00  6769   101  1.49 1265.34 18.69
+     128.01+  5052    27  0.53  880.22 17.42
+
+===============================================================================================
+NOTES
+===============================================================================================
+
+- This report groups by RACE (Date+RTime+track), not by horse - it measures
+  how many *different* horses get backed in the same race, which is a
+  separate effect from the same-horse-multiple-systems overlap covered by
+  every other report in this project.
+- Every figure still uses one stake per distinct horse - a horse flagged by
+  5 systems is one bet here too, exactly as elsewhere.
+- "4+ selections backed" means 4 or more different
+  horses in the same race, not 4+ systems agreeing on one horse.
+- Runners bands are field-size at the time of the race; BF odds bands use
+  the real archived Betfair SP (Odds_Exchange), same as every P/L figure
+  elsewhere in this project.
+- Small buckets (few hundred bets or fewer) are noisy - check the Bets
+  column before treating any single row as reliable, same caveat as every
+  other combination/agreement report here.
+
+Wrote race_dilution_by_year.csv, race_dilution_4plus_by_runners.csv, race_dilution_4plus_by_odds_band.csv
