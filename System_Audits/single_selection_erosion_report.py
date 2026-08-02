@@ -204,6 +204,44 @@ Explanation B: the pool of new systems has simply grown so large that being
 
     print()
     print("=" * 95)
+    print("IS THIS A BROAD DECAY IN 'NARROWING BY CONFIRMATION', OR SPECIFIC TO NEW "
+          "SYSTEMS?")
+    print("=" * 95)
+    print("""
+CEO's question after the above: has the general benefit of a second system
+confirming a pick decayed over time, or is the decay specific to
+confirmations that involve a newly-created system? Split the multi-system
+picture into the two pathways and compare their year-by-year ROI directly:
+
+  "old+old"  = 2+ EARLY (pre-2022) systems agree with each other - no new
+               system involved at all.
+  "promoted" = an early-single pick that a system saved after 2021 later
+               joined (as defined above).
+""")
+    pure_old = g[g["early_count"] >= 2]
+    old_by_year = pure_old.groupby("year").apply(
+        lambda d: pd.Series({"bets": len(d), "roi_pct": round(100 * d["pl_bf"].sum() / len(d), 2)}),
+        include_groups=False)
+    promoted_by_year = promoted_rows.groupby("year").apply(
+        lambda d: pd.Series({"bets": len(d), "roi_pct": round(100 * d["pl_bf"].sum() / len(d), 2)}),
+        include_groups=False)
+    compare = old_by_year.join(promoted_by_year, lsuffix="_old+old", rsuffix="_promoted")
+    print(compare.to_string())
+    print("""
+-> "old+old" agreement shows no real trend - noisy (-0.10% to 11.47%) but
+   still positive in 2026 (4.28%). The narrowing effect from an already-
+   established second system has NOT decayed.
+-> "promoted" is the one that collapsed: strong through 2024 (21-31%), then
+   falls off a cliff in 2025-26 (1.30%, then -3.19%).
+CONCLUSION: this is not a general decay of "narrowing by confirmation" - it
+is specific to the pathway where a newly-created system does the
+confirming, because that is the pathway whose candidate-confirmer pool grew
+~25x (Explanation B above). Confirmation by an established system still
+works as well as it ever did.
+""")
+
+    print()
+    print("=" * 95)
     print("NOTES")
     print("=" * 95)
     print(f"""
@@ -218,7 +256,10 @@ Explanation B: the pool of new systems has simply grown so large that being
 
     cat_df.to_csv(BASE / "single_selection_erosion_categories.csv", index=False)
     pd.DataFrame(yr_rows).to_csv(BASE / "single_selection_erosion_by_year.csv", index=False)
-    print("Wrote single_selection_erosion_categories.csv and single_selection_erosion_by_year.csv")
+    compare.to_csv(BASE / "single_selection_erosion_old_vs_promoted.csv")
+    print("Wrote single_selection_erosion_categories.csv, "
+          "single_selection_erosion_by_year.csv, and "
+          "single_selection_erosion_old_vs_promoted.csv")
 
 
 if __name__ == "__main__":

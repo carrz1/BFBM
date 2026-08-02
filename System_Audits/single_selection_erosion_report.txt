@@ -71,6 +71,40 @@ year
 -> This has grown roughly 25x from 2022 to 2026. By 2026, a 'promoted' bet is often confirmed by several new systems at once (up to a dozen seen in the data), not just one. Explanation B holds: with far more new systems live in later years, at least one of them firing on any given horse becomes close to guaranteed regardless of genuine merit - so 'a new system agreed' has gone from a meaningful independent second opinion to something closer to noise.
 
 ===============================================================================================
+IS THIS A BROAD DECAY IN 'NARROWING BY CONFIRMATION', OR SPECIFIC TO NEW SYSTEMS?
+===============================================================================================
+
+CEO's question after the above: has the general benefit of a second system
+confirming a pick decayed over time, or is the decay specific to
+confirmations that involve a newly-created system? Split the multi-system
+picture into the two pathways and compare their year-by-year ROI directly:
+
+  "old+old"  = 2+ EARLY (pre-2022) systems agree with each other - no new
+               system involved at all.
+  "promoted" = an early-single pick that a system saved after 2021 later
+               joined (as defined above).
+
+      bets_old+old  roi_pct_old+old  bets_promoted  roi_pct_promoted
+year                                                                
+2022        4639.0            10.14          391.0             21.32
+2023        4709.0            -0.10         1784.0             30.72
+2024        5033.0             1.56         2710.0             28.12
+2025        5410.0            11.47         4662.0              1.30
+2026        3390.0             4.28         3468.0             -3.19
+
+-> "old+old" agreement shows no real trend - noisy (-0.10% to 11.47%) but
+   still positive in 2026 (4.28%). The narrowing effect from an already-
+   established second system has NOT decayed.
+-> "promoted" is the one that collapsed: strong through 2024 (21-31%), then
+   falls off a cliff in 2025-26 (1.30%, then -3.19%).
+CONCLUSION: this is not a general decay of "narrowing by confirmation" - it
+is specific to the pathway where a newly-created system does the
+confirming, because that is the pathway whose candidate-confirmer pool grew
+~25x (Explanation B above). Confirmation by an established system still
+works as well as it ever did.
+
+
+===============================================================================================
 NOTES
 ===============================================================================================
 
@@ -82,4 +116,4 @@ NOTES
   report only adds the early/new system split on top of that.
 - ROI% = 100 * BF_P/L / Bets throughout.
 
-Wrote single_selection_erosion_categories.csv and single_selection_erosion_by_year.csv
+Wrote single_selection_erosion_categories.csv, single_selection_erosion_by_year.csv, and single_selection_erosion_old_vs_promoted.csv
