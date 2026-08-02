@@ -1,0 +1,48 @@
+Dropped 4 exact-duplicate systems (418 -> 414 distinct systems in the universe)
+
+Qualifying systems total: 220
+  saved on/before 2021-12-31 ('early'): 90
+  saved after 2021-12-31 ('new')       : 130
+
+===============================================================================================
+CATEGORY PERFORMANCE - was this bet 'stolen' from the single-selection bucket?
+===============================================================================================
+              Category  Bets  Win%  BF_P/L  ROI%
+single_new_system_only 39648  8.80 2714.30  6.85
+         stayed_single 39082 10.99 1918.95  4.91
+     was_already_multi 23181  7.89 1309.87  5.65
+multi_new_systems_only 14573  7.21 3790.33 26.01
+promoted_out_of_single 13015  7.45 1343.06 10.32
+
+Key comparison:
+  stayed_single           - single under the early-only view AND still
+                             single today (no new system ever joined)
+  promoted_out_of_single  - single under the early-only view, but a system
+                             saved after the cutoff has since joined it
+
+stayed_single    :  39,082 bets, ROI    4.91%
+promoted_out     :  13,015 bets, ROI   10.32%  (this is the performance of what got taken OUT of the single bucket)
+
+===============================================================================================
+PROMOTION RATE OVER TIME - is more of the early-single pool being absorbed each year?
+===============================================================================================
+ Year  Early-single pool  Promoted  Promotion rate %  Stayed-single ROI%  Promoted ROI%
+ 2022              10202       391              3.83               22.80          21.32
+ 2023              10434      1784             17.10                1.50          30.72
+ 2024              11560      2710             23.44                0.28          28.12
+ 2025              12623      4662             36.93               -1.19           1.30
+ 2026               7278      3468             47.65               -9.89          -3.19
+
+===============================================================================================
+NOTES
+===============================================================================================
+
+- "Early" = qualifying systems saved on/before 2021-12-31; "new" =
+  saved after. This is a fixed split, not a moving one - a system saved in
+  2022 counts as "new" for every year in this report, including 2026.
+- Every bet already respects each system's own odds band and saved-date
+  window (see verify_odds_band_applied.py and the audit pipeline) - this
+  report only adds the early/new system split on top of that.
+- ROI% = 100 * BF_P/L / Bets throughout.
+
+Wrote single_selection_erosion_categories.csv and single_selection_erosion_by_year.csv
