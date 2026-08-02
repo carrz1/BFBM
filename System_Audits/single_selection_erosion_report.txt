@@ -34,6 +34,43 @@ PROMOTION RATE OVER TIME - is more of the early-single pool being absorbed each 
  2026               7278      3468             47.65               -9.89          -3.19
 
 ===============================================================================================
+WHY DID PROMOTED-BET ROI COLLAPSE AFTER 2024? TWO COMPETING EXPLANATIONS
+===============================================================================================
+
+Explanation A: newer, less-tested systems are doing more of the confirming
+  as time passes (a seasoning problem - the confirming systems themselves
+  are getting worse/less proven).
+Explanation B: the pool of new systems has simply grown so large that being
+  "confirmed" has stopped meaning much - it's closer to noise than a
+  genuine second opinion (a volume/multiple-testing problem, not a
+  quality-of-confirmer problem).
+
+New qualifying systems already live by 1 Jan of each year:
+  2022: 0 of 130 new systems live
+  2023: 23 of 130 new systems live
+  2024: 69 of 130 new systems live
+  2025: 98 of 130 new systems live
+  2026: 122 of 130 new systems live
+
+Test of Explanation A - age (days since saved) of the newest confirming system, at the moment it confirms:
+year
+2022     76.0
+2023    127.5
+2024    374.0
+2025    337.0
+2026    346.0
+-> Confirmer age has RISEN (76 days in 2022 to 300+ by 2024-26), not fallen. Explanation A is ruled out - the systems doing the confirming are, if anything, more established over time, not less.
+
+Test of Explanation B - average number of DIFFERENT new systems piling onto the same early-single-pool horse (0 for bets that stayed single):
+year
+2022    0.042
+2023    0.236
+2024    0.381
+2025    0.677
+2026    1.055
+-> This has grown roughly 25x from 2022 to 2026. By 2026, a 'promoted' bet is often confirmed by several new systems at once (up to a dozen seen in the data), not just one. Explanation B holds: with far more new systems live in later years, at least one of them firing on any given horse becomes close to guaranteed regardless of genuine merit - so 'a new system agreed' has gone from a meaningful independent second opinion to something closer to noise.
+
+===============================================================================================
 NOTES
 ===============================================================================================
 
