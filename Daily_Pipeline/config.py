@@ -35,10 +35,15 @@ MAX_STAKE_PER_SELECTION = 1.0          # v1: no scaling, so this just equals FLA
 MAX_TOTAL_STAKE_PER_DAY = 150.0        # refuse to write past this, don't truncate
 MAX_SELECTION_COUNT = 150              # sanity ceiling catching a parsing bug
 
-# --- name formatting (verified 2026-08-03 via live BFBM testing - see
-#     the bfbm-tips-reference skill's Verified Findings) ---
-STRIP_CLOTH_NUMBER_PREFIX = False      # confirmed not needed
-STRIP_COUNTRY_SUFFIX = False           # deliberately NOT stripped - see ingest_hrb.py
+# --- name formatting ---
+STRIP_CLOTH_NUMBER_PREFIX = False      # confirmed not needed (2026-08-03 live BFBM test)
+STRIP_COUNTRY_SUFFIX = True            # CEO reports no country suffixes visible
+                                          # anywhere in BF/BFBM - overrides this
+                                          # pipeline's earlier (wrong) assumption
+                                          # that HRB's "(IRE)" etc. was genuine.
+                                          # Get one concrete same-day example
+                                          # confirmed before fully trusting this
+                                          # for a live run - see bfbm-tips-reference.
 
 # --- odds-band reconciliation across systems that agree on the same horse ---
 ODDS_RECONCILIATION_RULE = "intersection"   # "intersection" | "union"

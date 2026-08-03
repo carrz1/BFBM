@@ -13,6 +13,7 @@ import config
 
 _WHITESPACE_RE = re.compile(r"\s+")
 _CLOTH_NUMBER_RE = re.compile(r"^\s*\d{1,2}\.\s*")
+_COUNTRY_SUFFIX_RE = re.compile(r"\s*\([A-Z]{2,4}\)\s*$")
 
 
 def normalize_name(raw_name: str) -> tuple[str, str | None]:
@@ -23,15 +24,19 @@ def normalize_name(raw_name: str) -> tuple[str, str | None]:
     name = raw_name.strip()
     name = _WHITESPACE_RE.sub(" ", name)
 
+    note = None
+
     if config.STRIP_CLOTH_NUMBER_PREFIX:
         stripped = _CLOTH_NUMBER_RE.sub("", name)
         if stripped != name:
             note = f"stripped cloth-number prefix: {name!r} -> {stripped!r}"
             name = stripped
-        else:
-            note = None
-    else:
-        note = None
+
+    if config.STRIP_COUNTRY_SUFFIX:
+        stripped = _COUNTRY_SUFFIX_RE.sub("", name)
+        if stripped != name:
+            note = (note + "; " if note else "") + f"stripped country suffix: {name!r} -> {stripped!r}"
+            name = stripped
 
     if name != raw_name:
         note = note or f"whitespace-normalized: {raw_name!r} -> {name!r}"

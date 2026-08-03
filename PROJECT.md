@@ -440,23 +440,29 @@ this was built from; summary here:
   firing system's band (from `System_Audits/filter_similarity_systems.csv`);
   empty intersection or same-name-same-day ambiguity -> excluded and
   flagged, never guessed.
-- **Output format**: the exact BFBM format verified live earlier today
+- **Output format**: the exact BFBM format verified live on 2026-08-03
   (no cloth-number prefix, no IDs, `MarketType=WIN`) - see the
-  `bfbm-tips-reference` skill.
+  `bfbm-tips-reference` skill. **Country suffixes (`(IRE)`/`(FR)`/etc.)
+  ARE stripped** (`config.STRIP_COUNTRY_SUFFIX = True`) - this reverses
+  an assumption made earlier the same day (that HRB's suffixes were
+  genuine Betfair selection-name text); the CEO reported seeing no
+  suffixes anywhere in BF/BFBM while spot-checking the first run's
+  output, verified against real examples, corrected same-day. See
+  CHANGELOG for the full story - worth remembering this was wrong once
+  already if it ever comes up again.
 - **Safety**: dry-run to `staging/` by default, `--live` flag required
   to write to `live_output/`; hard caps on stake-per-selection, total
   daily stake, and selection count (refuses to write rather than
   truncating - verified by deliberately tripping the cap); never
   overwrites an existing day's output (verified).
-- **Tested against one real sample** (`noggin`, 2026-08-03's actual
-  qualifiers) - ran end-to-end in dry-run, produced a correctly-formatted
-  tips CSV and full report. A real bug was caught and fixed during this:
-  pandas silently turns a mixed None/float column into `NaN`, so the
-  original `is None` check for "no odds band" missed it and leaked the
-  literal string `"nan"` into MinPrice/MaxPrice - fixed to use
-  `pd.isna()`.
-- **Not yet tested**: the other 4 accounts' exports (only `noggin`'s
-  sample was available), and a real `--live` import into BFBM.
+- **Tested end-to-end against real exports from all 5 accounts**
+  (2026-08-03's actual qualifiers, 606 raw rows in) - dry-run produced 86
+  correctly-formatted, plain-name selections and a report whose numbers
+  actually reconcile. Two real bugs were caught and fixed along the way
+  (both in CHANGELOG): pandas silently turning "no odds band" into `NaN`
+  instead of blank, and the report's "read" counts having been computed
+  post-filter instead of pre-filter, making the funnel look inconsistent.
+- **Not yet tested**: a real `--live` import into BFBM.
 - **Deliberately out of scope for this build**: Racing API ingestion, HRB
   live-fetch automation (still Phase 2), and both deferred stake-sizing
   refinements (agreement-count scaling, value-ratio formula) - all

@@ -4,6 +4,35 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-03 (two real bugs caught during CEO's spot-check of the first Daily_Pipeline run)
+
+- **Country-suffix decision reversed - this entry's own earlier claim
+  today was wrong.** CEO reported not seeing country suffixes like
+  `(IRE)` anywhere in Betfair or BFBM while spot-checking the first run's
+  output - directly contradicting the assumption made a few hours
+  earlier (below) that HRB's `(IRE)`/`(FR)`/etc. suffixes were genuinely
+  part of Betfair's selection names. Verified the fix on real examples
+  from today's data (`Arctic Flame (IRE)` -> `Arctic Flame`, `Emiza (FR)`
+  -> `Emiza`, `Venosa (USA)` -> `Venosa`) before trusting it. Implemented
+  proper stripping in `normalize.py` (the config flag existed but had no
+  actual code behind it - it was a no-op) and flipped
+  `config.STRIP_COUNTRY_SUFFIX` to `True`. Re-ran the full 5-account
+  pipeline: every one of 86 final selections now shows a plain name with
+  no suffix.
+- **Fixed a reporting bug that made the funnel look broken.** The
+  report's "qualifier rows read" counts were actually being counted
+  *after* filtering (out-of-scope Multicuts and already-run races both
+  already removed), not before - which is why the first run's numbers
+  looked inconsistent (278 shown as "read" but 248 excluded as "already
+  run" alone, which is impossible). True raw counts are much higher -
+  257/96/53/70/130 across the 5 accounts, 606 total. Fixed by having
+  `ingest_hrb.load_today()` capture per-account counts before any
+  filtering and return them alongside the exclusions, instead of
+  counting the already-filtered DataFrame after the fact.
+- Both bugs were caught specifically *because* the CEO did the manual
+  spot-check the original spec calls for before trusting any output -
+  exactly the reason that step exists.
+
 ## 2026-08-03 (built Daily_Pipeline - the first real HRB -> BFBM tips CSV pipeline)
 
 - Built `Daily_Pipeline/` per Phase 1 of `claude_code_bfbm_pipeline_prompt.md`

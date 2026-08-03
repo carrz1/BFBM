@@ -27,16 +27,14 @@ def main():
                          help="write to LIVE_OUTPUT_DIR instead of STAGING_DIR")
     args = parser.parse_args()
 
-    per_account_counts = {}
-    for prefix, account in config.FILENAME_PREFIX_TO_ACCOUNT.items():
-        path = config.INPUT_DIR / f"{prefix}_qualifiers_{args.date}.csv"
-        per_account_counts[account] = "not provided" if not path.exists() else None
-
     rows_df, ingest_exclusions = ingest_hrb.load_today(args.date)
 
-    for account in config.ACCOUNTS:
-        if per_account_counts[account] is None:
-            per_account_counts[account] = int((rows_df["account"] == account).sum())
+    # true as-read counts, before any filtering - NOT a count of the
+    # already-filtered rows_df, which would silently understate "read"
+    per_account_counts = {
+        account: "not provided" for account in config.ACCOUNTS
+    }
+    per_account_counts.update(ingest_exclusions["raw_counts_per_account"])
 
     rows_df, normalize_log = normalize.normalize_dataframe(rows_df)
     rows_df, quality_exclusions = quality_filter.apply(rows_df)

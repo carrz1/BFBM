@@ -85,9 +85,12 @@ def _read_one_file(path: Path) -> pd.DataFrame:
 def load_today(target_date: str) -> tuple[pd.DataFrame, dict]:
     """Reads every account's file for target_date (YYYY-MM-DD) from
     config.INPUT_DIR. Returns (surviving_rows, exclusion_counts).
+    exclusions["raw_counts_per_account"] is the true as-read row count per
+    account, BEFORE any filtering - use this for reporting, not
+    len(surviving_rows) grouped by account, which is post-filter.
     """
     exclusions = {"missing_account_files": [], "out_of_scope_multicuts": 0,
-                  "already_run_or_no_time": 0}
+                  "already_run_or_no_time": 0, "raw_counts_per_account": {}}
     frames = []
 
     for prefix, account in config.FILENAME_PREFIX_TO_ACCOUNT.items():
@@ -100,6 +103,7 @@ def load_today(target_date: str) -> tuple[pd.DataFrame, dict]:
         if file_date != target_date:
             raise IngestError(f"{path.name}: filename date doesn't match requested {target_date}")
         df["account"] = file_account
+        exclusions["raw_counts_per_account"][file_account] = len(df)
         frames.append(df)
 
     if not frames:
