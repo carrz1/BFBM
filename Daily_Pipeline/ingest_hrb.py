@@ -32,8 +32,16 @@ import config
 EXPECTED_COLUMNS = {
     "Date", "StorageType", "slot", "description", "horse_name", "time",
     "track", "odds", "jockey_name", "trainer", "official_rating",
-    "Distance", "Age", "DaysSinceRun", "notes", "placing",
+    "notes", "placing",
 }
+# Columns seen in real exports but NOT required here because nothing in
+# this pipeline reads them, and they vary by account (confirmed
+# 2026-08-03: noggin/n4 have Distance+Age, n2 has neither, n3 has
+# Distance+RaceClass+LR_Position+LR_NumberRunners instead of Age, n5 has
+# none of them at all) - Distance, Age, DaysSinceRun, RaceClass,
+# LR_Position, LR_NumberRunners. If a future step needs one of these,
+# add it to EXPECTED_COLUMNS deliberately, don't just assume every
+# account has it.
 
 FILENAME_RE = re.compile(r"^(?P<prefix>n[2-5]?)_qualifiers_(?P<date>\d{4}-\d{2}-\d{2})\.csv$")
 
