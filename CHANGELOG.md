@@ -49,6 +49,60 @@ what happened and when, not a spec.
   Started at any point - tips sit in Manage Tips only, nothing has been
   bet on.
 
+## 2026-08-03 (first real bet placed and settled - in Simulation Mode - plus a real config gotcha found)
+
+- CEO's BFBM trial has limited days left, so moved straight to testing a
+  real bet via the vendor-shipped `EXAMPLE - Bet on all imported tips`
+  strategy (BFBM's own Simulation Mode confirmed on, so no real money
+  at risk). Set its `TipsCondition` Provider filter to `BFBM_HRB_v1` and
+  started it.
+- **5 bets placed early on, all with `sizeMatched: 0`** (per `log.txt`),
+  then nothing for over an hour despite eligible races (Windsor 18:00)
+  passing with no bet fired. Looked like something had broken.
+- **Root cause, found by diffing BFBM's own pre-today strategy backup
+  (`strategies_backup/2026-08-02_multiple_strategies_conditions.gz`)
+  against the live config, not by guessing**: the vendor default for
+  this strategy's `MinMaxSelectionPriceCondition` is **`1.01 - 20`, with
+  `UseCustomPriceRange=false`** - silently rejecting any selection
+  trading above 20, regardless of the tip's own `MinPrice`/`MaxPrice`.
+  Since most of this project's systems have odds bands well above 20
+  (many to 65-1000), this alone explains why only a handful of the 56
+  real selections could ever have fired - unrelated to the Provider
+  field or "time to bet" setting the CEO had also been adjusting while
+  troubleshooting.
+- **CEO's own fix (widening it to `MinPrice=1.01, MaxPrice=1000,
+  UseCustomPriceRange=true`) was correct, not a mistake** - confirmed by
+  a real result: `Star Bayside Boy` (band 9.01-30, crossing the old
+  20 cutoff) subsequently bet and settled as a winner, virtual profit
+  ~£21 in Simulation Mode. **First full real-cycle validation of the
+  whole pipeline**: HRB qualifiers -> Daily_Pipeline -> BFBM CSV ->
+  import -> name resolution -> real bet -> matched -> race run ->
+  settled -> won.
+- Noted for later: the Provider filter is currently blank (not
+  restricting to `BFBM_HRB_v1` specifically right now) - harmless today
+  since nothing else in Manage Tips shares real horse names with the
+  pipeline's tips, but worth resetting once the CEO is confident in the
+  setup. The strategy's other untouched vendor defaults (Overround
+  100-115%/85-100%, Back/Lay ratio max 15%) still apply and haven't been
+  specifically validated against this project's real data yet.
+- **Confirmed this is a documented gotcha, not an obscure one**: manual
+  p.82 states outright "The Min/Max selection price tells the bot not to
+  bet on any odds over 20 in its default setting. So if your tips
+  include high odds events, then it may need changing." p.201 repeats
+  the same warning for the Proform-tips variant of this example.
+- **Two separate price gates exist, and they overlap** - per manual
+  §14.2.13 (p.457-458), `MinMaxSelectionPriceCondition`'s "use custom
+  price range" mode reads from the Markets/Selections grid's manually-
+  entered price (the "My Selections" feature), NOT the imported CSV's
+  MinPrice/MaxPrice. Separately, the manual states the `TipsCondition`
+  staking rule already automatically enforces each tip's own
+  MinPrice/MaxPrice on its own, independent of this other condition. So
+  the cleanest setup is to leave `MinMaxSelectionPriceCondition` wide
+  open (`1.01`-`1000`, effectively disabled) and let each tip's own CSV
+  price band - enforced separately by `TipsCondition` - be the real,
+  authoritative constraint. This is exactly what the CEO's fix achieved,
+  confirmed correct by the manual rather than just by the result.
+
 ## 2026-08-03 (two real bugs caught during CEO's spot-check of the first Daily_Pipeline run)
 
 - **Country-suffix decision reversed - this entry's own earlier claim

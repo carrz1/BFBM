@@ -475,10 +475,34 @@ this was built from; summary here:
   **run this pipeline close to when you intend to import, ideally before
   the day's racing starts** - running it mid-afternoon understates the
   day's real opportunity set.
-- **Not yet tested**: whether the imported selections actually resolve to
-  real markets at scale (checked individually via Column chooser
-  earlier for single test tips, not yet re-checked for a full real
-  batch), and any actual `--live` bet placement (still nothing started).
+- **Resolution confirmed at real scale**: all 56 selections showed
+  populated `MarketId`/`EventId` via the Manage Tips Column chooser -
+  zero unmatched.
+- **First real bet placed and settled - in Simulation Mode - via the
+  vendor-shipped `EXAMPLE - Bet on all imported tips` strategy.**
+  `Star Bayside Boy` bet and won, virtual profit ~£21 - the first
+  full-cycle validation (import -> resolve -> bet -> match -> settle) of
+  the whole pipeline. Getting there required fixing a real BFBM
+  configuration gotcha, not a pipeline bug:
+  **the vendor default `MinMaxSelectionPriceCondition` is hardcoded to
+  `1.01-20`** (manual p.82 confirms this explicitly: "if your tips
+  include high odds events, then it may need changing") - silently
+  rejecting any selection trading above 20 regardless of that tip's own
+  `MinPrice`/`MaxPrice`. Since most of this project's systems bet well
+  above 20, this blocked most of the 56 real selections from ever firing
+  until widened to `1.01-1000` (effectively disabled) - confirmed as the
+  correct fix by the manual, not just by the result: `TipsCondition`
+  already separately enforces each tip's own price band on its own, so
+  this other condition should just stay wide open rather than duplicate
+  (and potentially conflict with) that. Full diagnostic trail (diffing
+  BFBM's own pre-today strategy backup against the live config) in
+  CHANGELOG.
+- **Still to do before any real (non-simulation) betting**: reset the
+  Provider filter to `BFBM_HRB_v1` (currently blank), and review the
+  strategy's other untouched vendor defaults (Overround 100-115%/
+  85-100%, Back/Lay ratio max 15%) against this project's real data -
+  neither has caused a problem yet but neither has been specifically
+  validated either.
 - **Deliberately out of scope for this build**: Racing API ingestion, HRB
   live-fetch automation (still Phase 2), and both deferred stake-sizing
   refinements (agreement-count scaling, value-ratio formula) - all
