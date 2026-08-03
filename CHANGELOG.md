@@ -4,6 +4,49 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-03 (built Daily_Pipeline - the first real HRB -> BFBM tips CSV pipeline)
+
+- Built `Daily_Pipeline/` per Phase 1 of `claude_code_bfbm_pipeline_prompt.md`
+  (HRB only, Racing API deferred): `ingest_hrb.py`, `normalize.py`,
+  `quality_filter.py`, `consolidate.py`, `write_bfbm_csv.py`, `report.py`,
+  `run_pipeline.py`, `config.py`. Full rationale in PROJECT.md's new
+  "Daily_Pipeline" section.
+- Got a real sample HRB bulk-qualifier export from the CEO
+  (`n_qualifiers_2026-08-03.csv`, the `noggin` account) - confirmed its
+  schema empirically rather than guessing, and learned two things that
+  shaped the design: `horse_name` already carries breeding-country
+  suffixes like `(IRE)` that should NOT be stripped (unlike the
+  cloth-number prefix, confirmed unnecessary yesterday), and the file
+  mixes already-run and still-to-come races for the day, so eligibility
+  is decided by comparing each row's race time against wall-clock now
+  rather than trusting the `placing` column.
+- Also found `StorageType = "My Multicuts"` rows in that export - a
+  different HRB mechanism (slot always `0`) never covered by this
+  project's system audit - excluded from v1 and reported as out-of-scope
+  rather than forced through the quality gate.
+- CEO's filename convention for the 5 daily exports: `n_qualifiers_DATE.csv`
+  / `n2_..` / `n3_..` / `n4_..` / `n5_..` (see
+  `config.FILENAME_PREFIX_TO_ACCOUNT`).
+- Stake sizing decided for v1: flat unit stake, gated only by system
+  quality (`filtered_agreement_qualifying_systems.csv`) - explicitly NOT
+  agreement-count scaling or the value-ratio formula yet, both deferred
+  to v2 pending live validation.
+- Ran the full pipeline end-to-end (dry-run) against the real sample:
+  137 qualifier rows in, 56 final selections, correctly formatted output
+  CSV. Caught and fixed a real bug during this - pandas coerces a mixed
+  None/float column to `NaN`, so the original `is None` check for "no
+  odds band" missed it and leaked the literal string `"nan"` into
+  `MinPrice`/`MaxPrice`; fixed to use `pd.isna()`. Also verified the
+  safety rails actually work, not just exist: deliberately lowered the
+  daily stake cap and confirmed the pipeline refuses to write rather than
+  truncating, and confirmed re-running for the same date refuses to
+  overwrite the existing output.
+- **Not yet tested**: the other 4 accounts' real exports (only `noggin`'s
+  sample was available today), and a real `--live` import into BFBM.
+- `.gitignore` extended to exclude `Daily_Pipeline/input/*.csv`,
+  `staging/*`, `live_output/*` (kept as empty dirs via `.gitkeep`) - the
+  daily exports and generated tips/reports are working data, not source.
+
 ## 2026-08-02 (BFBM live-execution pipeline investigated - dormant, not broken)
 
 - CEO asked how the value-ratio staking formula (below) could actually be

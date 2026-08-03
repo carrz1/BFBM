@@ -419,10 +419,48 @@ Progression of live tests, all documented in detail in the
    **Also learned tip resolution is a periodic rescan, not instant** -
    don't check/rely on match status immediately after import.
 
-**All Open Questions in the reference skill are now resolved.** Next real
-step, not yet started: design the actual daily pipeline (HRB/Racing API
-selections -> merged CSV -> BFBM import) using the now-confirmed format
-and behavior - not requested yet.
+**All Open Questions in the reference skill are now resolved.**
+
+## Daily_Pipeline - HRB -> BFBM tips CSV (built 2026-08-03)
+
+Phase 1 of `claude_code_bfbm_pipeline_prompt.md`'s two-phase spec, HRB
+only (Racing API/Source B deferred). Full design rationale in the plan
+this was built from; summary here:
+
+- **Input**: 5 manually-exported HRB bulk-qualifier CSVs per day, named
+  `n_qualifiers_DATE.csv` / `n2_..` / `n3_..` / `n4_..` / `n5_..` (mapping
+  to noggin/noggin2/noggin3/noggin4/noggin5 - see
+  `config.FILENAME_PREFIX_TO_ACCOUNT`), dropped in `Daily_Pipeline/input/`.
+- **Gating**: only systems in `System_Audits/filtered_agreement_qualifying_systems.csv`
+  (the 220 quality-filtered systems) get to vote - reused, not recomputed.
+- **Stake**: flat unit stake in v1, deliberately no agreement-count
+  scaling or value-ratio formula yet (see "Selection-quality refinement"
+  above for why both need more validation first).
+- **Odds bands**: reconciled per selection via intersection across every
+  firing system's band (from `System_Audits/filter_similarity_systems.csv`);
+  empty intersection or same-name-same-day ambiguity -> excluded and
+  flagged, never guessed.
+- **Output format**: the exact BFBM format verified live earlier today
+  (no cloth-number prefix, no IDs, `MarketType=WIN`) - see the
+  `bfbm-tips-reference` skill.
+- **Safety**: dry-run to `staging/` by default, `--live` flag required
+  to write to `live_output/`; hard caps on stake-per-selection, total
+  daily stake, and selection count (refuses to write rather than
+  truncating - verified by deliberately tripping the cap); never
+  overwrites an existing day's output (verified).
+- **Tested against one real sample** (`noggin`, 2026-08-03's actual
+  qualifiers) - ran end-to-end in dry-run, produced a correctly-formatted
+  tips CSV and full report. A real bug was caught and fixed during this:
+  pandas silently turns a mixed None/float column into `NaN`, so the
+  original `is None` check for "no odds band" missed it and leaked the
+  literal string `"nan"` into MinPrice/MaxPrice - fixed to use
+  `pd.isna()`.
+- **Not yet tested**: the other 4 accounts' exports (only `noggin`'s
+  sample was available), and a real `--live` import into BFBM.
+- **Deliberately out of scope for this build**: Racing API ingestion, HRB
+  live-fetch automation (still Phase 2), and both deferred stake-sizing
+  refinements (agreement-count scaling, value-ratio formula) - all
+  explicitly v2+ work per the CEO's decision.
 
 ## How the audit actually works (HRB mechanics)
 
