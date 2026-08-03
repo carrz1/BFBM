@@ -48,6 +48,15 @@ STRIP_COUNTRY_SUFFIX = True            # CEO reports no country suffixes visible
 # --- odds-band reconciliation across systems that agree on the same horse ---
 ODDS_RECONCILIATION_RULE = "intersection"   # "intersection" | "union"
 
+# Betfair's actual tradable decimal-odds range - used as the MinPrice/
+# MaxPrice for a genuinely unrestricted selection instead of leaving the
+# field blank. CONFIRMED 2026-08-03: a blank MinPrice/MaxPrice value
+# causes BFBM's importer to reject the ENTIRE file (0 tips imported),
+# not just that row - isolated via a bisection of diagnostic files after
+# the CEO's real 86-row pipeline output imported as 0. Never write "".
+UNRESTRICTED_MIN_PRICE = 1.01
+UNRESTRICTED_MAX_PRICE = 1000.0
+
 # --- BFBM tips CSV output ---
 PROVIDER_NAME = "BFBM_HRB_v1"
 MARKET_TYPE = "WIN"

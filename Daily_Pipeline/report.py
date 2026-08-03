@@ -5,6 +5,8 @@ from collections import Counter
 from itertools import combinations
 from io import StringIO
 
+import config
+
 
 def _system_correlation_lines(consolidated) -> list[str]:
     pair_counts = Counter()
@@ -59,7 +61,9 @@ def build_report(target_date, ingest_exclusions, quality_exclusions,
     w("\n--- FINAL SELECTIONS ---")
     w(f"  {len(rows)} selections, total stake {sum(r['Size'] for r in rows):.2f}")
     for r in rows:
-        band = f"{r['MinPrice']}-{r['MaxPrice']}" if r["MinPrice"] != "" else "unrestricted"
+        is_unrestricted = (r["MinPrice"] == config.UNRESTRICTED_MIN_PRICE
+                            and r["MaxPrice"] == config.UNRESTRICTED_MAX_PRICE)
+        band = "unrestricted" if is_unrestricted else f"{r['MinPrice']}-{r['MaxPrice']}"
         w(f"  {r['SelectionName']:<30} Size={r['Size']:<6} Band={band}")
 
     w("\n--- SYSTEM CORRELATION (today only) ---")

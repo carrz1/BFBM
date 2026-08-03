@@ -456,13 +456,29 @@ this was built from; summary here:
   truncating - verified by deliberately tripping the cap); never
   overwrites an existing day's output (verified).
 - **Tested end-to-end against real exports from all 5 accounts**
-  (2026-08-03's actual qualifiers, 606 raw rows in) - dry-run produced 86
+  (2026-08-03's actual qualifiers, 606 raw rows in) - dry-run produced
   correctly-formatted, plain-name selections and a report whose numbers
-  actually reconcile. Two real bugs were caught and fixed along the way
-  (both in CHANGELOG): pandas silently turning "no odds band" into `NaN`
-  instead of blank, and the report's "read" counts having been computed
-  post-filter instead of pre-filter, making the funnel look inconsistent.
-- **Not yet tested**: a real `--live` import into BFBM.
+  actually reconcile. Three real bugs were caught and fixed along the way
+  (all in CHANGELOG): pandas silently turning "no odds band" into `NaN`
+  instead of blank; the report's "read" counts having been computed
+  post-filter instead of pre-filter; and the big one -
+  **a blank `MinPrice`/`MaxPrice` value causes BFBM's importer to reject
+  the ENTIRE file, not just that row** (found via the first real import
+  attempt reporting "0 tips imported", isolated by bisecting hand-built
+  diagnostic CSVs). Fixed by writing Betfair's actual tradable range
+  (`1.01`-`1000.0`) for genuinely-unrestricted selections instead of a
+  blank value - never write an empty price field again.
+- **First real BFBM import: successful.** 56 of 56 selections imported
+  (the day's eligible count had dropped from 86 while the bug above was
+  being diagnosed - purely because more races had gone off in that time,
+  not a further bug - see CHANGELOG). Confirms the operational lesson:
+  **run this pipeline close to when you intend to import, ideally before
+  the day's racing starts** - running it mid-afternoon understates the
+  day's real opportunity set.
+- **Not yet tested**: whether the imported selections actually resolve to
+  real markets at scale (checked individually via Column chooser
+  earlier for single test tips, not yet re-checked for a full real
+  batch), and any actual `--live` bet placement (still nothing started).
 - **Deliberately out of scope for this build**: Racing API ingestion, HRB
   live-fetch automation (still Phase 2), and both deferred stake-sizing
   refinements (agreement-count scaling, value-ratio formula) - all

@@ -5,6 +5,13 @@ export convention (not required for matching, kept for consistency).
 
 Refuses to write - rather than truncating - if either hard cap would be
 exceeded. Never round-trips through Excel; written directly as text.
+
+CONFIRMED 2026-08-03 (diagnostic bisection after the first real 86-row
+file imported as 0): a blank MinPrice/MaxPrice value causes BFBM's
+importer to reject the WHOLE file, not just that row - even a single
+lone row with a blank band, on its own, imports as 0. NEVER write an
+empty string for these fields - use config.UNRESTRICTED_MIN_PRICE /
+UNRESTRICTED_MAX_PRICE for genuinely-unrestricted selections instead.
 """
 import csv
 
@@ -27,8 +34,8 @@ def build_rows(consolidated) -> list[dict]:
             "Provider": config.PROVIDER_NAME,
             "MarketType": config.MARKET_TYPE,
             "SelectionName": r["normalized_name"],
-            "MinPrice": "" if pd.isna(r["min_price"]) else r["min_price"],
-            "MaxPrice": "" if pd.isna(r["max_price"]) else r["max_price"],
+            "MinPrice": config.UNRESTRICTED_MIN_PRICE if pd.isna(r["min_price"]) else r["min_price"],
+            "MaxPrice": config.UNRESTRICTED_MAX_PRICE if pd.isna(r["max_price"]) else r["max_price"],
             "BetType": config.BET_TYPE,
             "Size": stake,
         })

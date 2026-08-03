@@ -4,6 +4,43 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-03 (first real BFBM import attempt - found and fixed a whole-file-breaking bug)
+
+- CEO tried importing the real 86-selection pipeline output into BFBM for
+  the first time (only a few days left on the BFBM trial, so moved
+  straight to a real test rather than more synthetic ones). Result:
+  **"Number of Tips Imported: 0"** - not silent/ambiguous like every
+  earlier test, an explicit zero.
+- Diagnosed via a systematic bisection of small hand-built CSVs (isolate
+  one variable at a time: integer vs decimal `Size`, blank vs populated
+  `MinPrice`/`MaxPrice`, then every pairwise/triple combination of the
+  extra columns) rather than guessing. Root cause, confirmed with a single
+  isolated row: **a blank `MinPrice`/`MaxPrice` value causes BFBM's
+  importer to reject the ENTIRE file, not just that row** - even one
+  lone row with a blank band, on its own, imports as 0. The original
+  86-row file had 4 genuinely-unrestricted selections written with blank
+  bands, which poisoned the whole file.
+- **Fixed in `write_bfbm_csv.py`**: never write an empty price field.
+  Genuinely-unrestricted selections now get Betfair's actual tradable
+  range (`1.01`-`1000.0`, new `config.UNRESTRICTED_MIN_PRICE`/
+  `UNRESTRICTED_MAX_PRICE`) instead of a blank - functionally equivalent
+  to "no restriction" but a real number BFBM's parser accepts.
+- Re-ran the pipeline (by then down to 56 eligible selections - more
+  races had gone off in the time spent diagnosing, see below) and
+  **imported 56 of 56 successfully** - confirmed via BFBM's own count,
+  not just "no error."
+- Also confirms something worth remembering operationally: the CEO
+  reasonably asked why the count dropped from 86 to 56 - purely because
+  real time passed between generating the file and importing it, and
+  more races finished in that window (the pipeline only ever includes
+  races still ahead of "now" at run time). **This pipeline needs to run
+  close to when you actually intend to import, ideally before the day's
+  racing starts** - running it mid-afternoon understates the day's real
+  opportunity set.
+- Cleared the many diagnostic test tips from Manage Tips afterward (tick
+  each row's checkbox -> Delete selected, or delete-all if clearing
+  everything - no ctrl/shift multi-select on this grid, per the manual).
+
 ## 2026-08-03 (two real bugs caught during CEO's spot-check of the first Daily_Pipeline run)
 
 - **Country-suffix decision reversed - this entry's own earlier claim
