@@ -40,6 +40,14 @@ what happened and when, not a spec.
 - Cleared the many diagnostic test tips from Manage Tips afterward (tick
   each row's checkbox -> Delete selected, or delete-all if clearing
   everything - no ctrl/shift multi-select on this grid, per the manual).
+- **Checked resolution at real scale (not just 1-2 synthetic tips):
+  all 56 imported selections show populated `MarketId`/`EventId`** via
+  the Column chooser - every one resolved to a real live market by name
+  alone, zero unmatched. This is the first end-to-end validation of the
+  whole chain (HRB qualifiers -> Daily_Pipeline -> BFBM CSV -> import ->
+  name-based market resolution) at real scale. No strategy has been
+  Started at any point - tips sit in Manage Tips only, nothing has been
+  bet on.
 
 ## 2026-08-03 (two real bugs caught during CEO's spot-check of the first Daily_Pipeline run)
 
