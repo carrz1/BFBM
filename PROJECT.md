@@ -400,11 +400,29 @@ tip-filter on as a backstop for the narrower case where the *selection
 itself* is scratched (that filter doesn't cover a different runner being
 scratched, which is the harder case for this formula).
 
-**Status: waiting on a live re-test.** Next step is retrying `Manage tips
--> Import tips from file` with `from BFBM.csv`, with no strategy started
-(so even success can't place a real bet against the already-closed 2020
-market), to confirm the 2020 bugs don't recur before any pipeline work
-starts on top of this.
+**Status: name-based matching now fully verified end-to-end (2026-08-03).**
+Progression of live tests, all documented in detail in the
+`bfbm-tips-reference` skill's Verified Findings:
+1. Re-imported the 2020 test file `from BFBM.csv` (real IDs, closed
+   market) - confirmed the import mechanism itself works.
+2. Exported "My S." from a live market per the manual's method - confirmed
+   `MarketType=WIN` for certain, but this export always uses
+   `EventId`/`MarketId`/`SelectionId` and never exercises `SelectionName`
+   when BFBM already has the IDs.
+3. First name-only test (no IDs, "Palace Legacy") was confounded - the
+   race turned out to be the next day, outside autoload's "today's card"
+   scope, so matching was unreliable/delayed.
+4. **Clean redo against a same-day race ("All Good", Ripon 14:54) resolved
+   it: a plain selection name with no cloth-number prefix is sufficient
+   for BFBM to match a tip correctly**, confirmed via the Manage Tips
+   grid's Column chooser (`Start Time` showed the exact correct race).
+   **Also learned tip resolution is a periodic rescan, not instant** -
+   don't check/rely on match status immediately after import.
+
+**All Open Questions in the reference skill are now resolved.** Next real
+step, not yet started: design the actual daily pipeline (HRB/Racing API
+selections -> merged CSV -> BFBM import) using the now-confirmed format
+and behavior - not requested yet.
 
 ## How the audit actually works (HRB mechanics)
 

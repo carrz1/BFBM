@@ -50,11 +50,28 @@ what happened and when, not a spec.
   native "removed runner" tip-filter switched on as a backstop for the
   case where the selection itself is scratched (that filter doesn't
   address a *different* runner being scratched, which is the harder case).
-- **Status: waiting on a live test.** CEO is going to retry importing
-  `from BFBM.csv` via Manage Tips -> Import tips from file tomorrow (with
-  no strategy started, so even success can't place a bet against the
-  already-closed 2020 market) to confirm the 2020 bugs don't recur before
-  any real pipeline work starts.
+- **Update 2026-08-03: re-test succeeded, then both remaining open
+  questions resolved.** CEO re-imported `from BFBM.csv` with no strategy
+  started; all 6 tips appeared correctly - confirms the 2020 failure
+  really was just that occasion's file-lock issue, not a broken feature.
+  Followed up with the manual's own resolution method (Export "My S."
+  from a live market) - confirmed `MarketType=WIN` for certain, though
+  that export always uses real Betfair IDs and never exercises
+  `SelectionName`. A first name-only test ("Palace Legacy", no IDs) was
+  confounded by the race being the next day, outside autoload's
+  "today's card" scope. **A clean redo against a same-day race ("All
+  Good", Ripon 14:54) confirmed a plain selection name with no
+  cloth-number prefix is enough for BFBM to match a tip correctly** -
+  verified via the Manage Tips grid's Column chooser (`Start Time` showed
+  the exact right race). Also learned tip resolution is a periodic
+  rescan, not instant on import - a tip with no `MarketId`/`EventId`
+  right after import isn't necessarily a failed match, just not yet
+  rescanned. Along the way, found the Manage Tips form can open behind
+  other windows (looks like a freeze), defaults to only 3 visible columns
+  (`Chance` reads 0 regardless of match status - not a useful signal),
+  and has an undocumented-but-working right-click Column chooser for
+  `MarketId`/`EventId`/`Start Time`. **All open questions in the
+  `bfbm-tips-reference` skill are now resolved** - full detail there.
 
 ## 2026-08-02 (value-ratio staking formula tested - odds/field-size based stake scaling)
 
