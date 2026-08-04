@@ -4,6 +4,40 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-04 (second day's real run - two more data-format bugs found and fixed)
+
+- First real run of `Daily_Pipeline` on a genuinely new day, run in the
+  morning (10:25) before racing started - deliberately following the
+  operational lesson from 2026-08-03 (run it before the day's racing,
+  not mid-afternoon). CEO exported all 5 accounts' qualifiers and this
+  time it showed exactly why that lesson matters: **135 selections**
+  from today's full day, vs 56 the previous day after most races had
+  already gone off.
+- **Bug 1 - the `Date` column's format is not consistent day to day.**
+  2026-08-03's export used ISO dates (`2026-08-03`); 2026-08-04's used UK
+  format (`04/08/2026`, day/month/year). Pandas' default date parser
+  assumes month-first for ambiguous slash-separated dates, so it silently
+  misread every race as being in April instead of August - making every
+  single row look like it had already run, producing **0 selections**
+  on the first attempt. Fixed by passing `dayfirst=True` to
+  `pd.to_datetime` in `ingest_hrb.py` - a no-op for the unambiguous ISO
+  case, correct for the UK-format case.
+- **Bug 2 - `slot` got read as a float, not an integer**, on this day's
+  files (`1.0` instead of `1`) - almost certainly because a blank/NaN
+  slot value somewhere in one of the 5 files forced pandas to infer
+  float64 for that whole column. This silently broke every `sys_key`
+  join against the quality-filtered system list and the odds-band
+  lookup (`noggin2:1.0` matches nothing), excluding all 336 remaining
+  rows as "not quality-filtered" even though they should have qualified.
+  Fixed by explicitly converting `slot` via
+  `pd.to_numeric(...).astype("Int64").astype(str)` before building
+  `sys_key`, regardless of how pandas happened to infer the column's
+  dtype that day.
+- **Lesson for this pipeline going forward: HRB's own export format is
+  not stable day to day** (at minimum, date format and slot dtype have
+  both varied within two days of testing) - `ingest_hrb.py` needs to
+  stay defensive about exact formatting, not just column names.
+
 ## 2026-08-03 (first real BFBM import attempt - found and fixed a whole-file-breaking bug)
 
 - CEO tried importing the real 86-selection pipeline output into BFBM for

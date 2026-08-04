@@ -118,10 +118,24 @@ def load_today(target_date: str) -> tuple[pd.DataFrame, dict]:
     exclusions["out_of_scope_multicuts"] = int((~scope_mask).sum())
     all_rows = all_rows[scope_mask].copy()
 
-    all_rows["sys_key"] = all_rows["account"] + ":" + all_rows["slot"].astype(str)
+    # CONFIRMED 2026-08-04: `slot` isn't reliably read as an integer -
+    # pandas infers float64 for this column on some days (likely a blank/
+    # NaN slot value somewhere forcing it), producing "1.0" instead of
+    # "1" and silently breaking every sys_key join against the quality/
+    # odds-band CSVs (which use plain integer slot numbers). Force a
+    # clean integer-string form regardless of how pandas read the column.
+    clean_slot = pd.to_numeric(all_rows["slot"], errors="coerce").astype("Int64").astype(str)
+    all_rows["sys_key"] = all_rows["account"] + ":" + clean_slot
+    # CONFIRMED 2026-08-04: the Date column's format is NOT consistent
+    # day to day - 2026-08-03's export used ISO (YYYY-MM-DD), 2026-08-04's
+    # used UK format (DD/MM/YYYY). pandas' default parser assumes
+    # month-first for ambiguous slash dates, silently misreading e.g.
+    # "04/08/2026" as April 8th instead of August 4th - which made every
+    # race look like it was already in the past. dayfirst=True fixes the
+    # UK-format case and is a no-op for the unambiguous ISO case.
     all_rows["race_dt"] = pd.to_datetime(
         all_rows["Date"].astype(str) + " " + all_rows["time"].astype(str),
-        errors="coerce",
+        errors="coerce", dayfirst=True,
     )
 
     bad_time = all_rows["race_dt"].isna()

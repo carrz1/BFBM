@@ -8,3 +8,5 @@ Daily_Pipeline/staging/*
 Daily_Pipeline/live_output/*
 !Daily_Pipeline/staging/.gitkeep
 !Daily_Pipeline/live_output/.gitkeep
+
+/todays selections/
