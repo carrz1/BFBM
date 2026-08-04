@@ -4,6 +4,26 @@ All notable work on this project, newest first. See
 [PROJECT.md](PROJECT.md) for the full picture — this file is a log of
 what happened and when, not a spec.
 
+## 2026-08-04 (imported today's 135 selections - autoload didn't survive a BFBM restart)
+
+- Imported the day's real tips CSV (135 selections) - initially none
+  showed a resolved `MarketId`/`EventId` via the Column chooser. A
+  transient DNS failure (`api.betfair.com` unresolvable) appeared in
+  `log.txt` around the same time but had already cleared itself within
+  ~7 minutes - not the actual cause.
+- CEO restarted BFBM as a troubleshooting step; still no resolution
+  afterward. Checked the Events & Markets screen directly rather than
+  guessing further from Manage Tips alone: **it was completely empty -
+  no markets loaded at all.** Confirmed the fix is re-triggering market
+  loading (not re-importing the tips, which would have done nothing -
+  the tips were already correctly imported, there was simply nothing
+  for them to resolve against).
+- **New operational finding, recorded in the `bfbm-tips-reference`
+  skill: autoload does not reliably survive a BFBM restart.** Worth
+  checking Events & Markets for an empty list first, before assuming a
+  tips/CSV problem, any time resolution fails after restarting BFBM
+  mid-session.
+
 ## 2026-08-04 (second day's real run - two more data-format bugs found and fixed)
 
 - First real run of `Daily_Pipeline` on a genuinely new day, run in the
